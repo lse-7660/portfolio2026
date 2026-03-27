@@ -1,0 +1,47 @@
+.inline-padding {
+  padding-left: var(--page-padding);
+  padding-right: var(--page-padding);
+}
+.block-padding {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-7);
+}
+.grid-row-2 {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: var(--unit-gap);
+}
+.grid-col-2 {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--unit-gap);
+}
+
+.middle-point {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--gray-subtext);
+}
+.project-stack {
+  display: flex;
+  flex-direction: row;
+}
+.project-stack-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.middle-point-wrap {
+  height: 100%;
+  width: fit-content;
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.relative {
+  position: relative;
+}

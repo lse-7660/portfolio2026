@@ -1,0 +1,126 @@
+@font-face {
+  font-family: 'Prog';
+  src: url(/src/assets/fonts/prog-bot.regular.ttf);
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('/src/assets/fonts/PretendardVariable.ttf') format('woff2-variations');
+}
+
+:root {
+  /* Text-size styles */
+  --font-display-xxlarge: 96px;
+  --font-display-xlarge: 72px;
+  --font-display-large: 60px;
+  --font-display-medium: 48px;
+  --font-display-small: 36px;
+  --font-display-xsmall: 28px;
+
+  --font-heading-xlarge: 40px;
+  --font-heading-large: 32px;
+  --font-heading-medium: 28px;
+  --font-heading-small: 24px;
+  --font-heading-xsmall: 20px;
+
+  --font-body-small: 16px;
+  --font-body-xsmall: 14px;
+
+  --font-label-xlarge: 26px;
+  --font-label-large: 22px;
+  --font-label-medium: 18px;
+  --font-label-small: 14px;
+
+  /* font-weight styles */
+  --font-weight-extrabold: 800;
+  --font-weight-bold: 700;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+  --font-weight-light: 300;
+}
+
+.font-prog {
+  font-family: 'Prog';
+  font-weight: var(--font-weight-regular);
+}
+
+/* font style class */
+
+.font-extrabold {
+  font-weight: var(--font-weight-extrabold);
+}
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+.font-regular {
+  font-weight: var(--font-weight-regular);
+}
+.font-light {
+  font-weight: var(--font-weight-light);
+}
+
+.font-display-xxlarge {
+  font-size: var(--font-display-xxlarge);
+}
+.font-display-xlarge {
+  font-size: var(--font-display-xlarge);
+}
+.font-display-large {
+  font-size: var(--font-display-large);
+}
+.font-display-medium {
+  font-size: var(--font-display-medium);
+}
+.font-display-small {
+  font-size: var(--font-display-small);
+}
+.font-display-xsmall {
+  font-size: var(--font-display-xsmall);
+}
+
+.font-heading-xlarge {
+  font-size: var(--font-heading-xlarge);
+}
+.font-heading-large {
+  font-size: var(--font-heading-large);
+}
+.font-heading-medium {
+  font-size: var(--font-heading-medium);
+}
+.font-heading-small {
+  font-size: var(--font-heading-small);
+}
+.font-heading-xsmall {
+  font-size: var(--font-heading-xsmall);
+}
+
+.font-body-small {
+  font-size: var(--font-body-small);
+}
+.font-body-xsmall {
+  font-size: var(--font-body-xsmall);
+}
+
+.font-label-xlarge {
+  font-size: var(--font-label-xlarge);
+}
+.font-label-large {
+  font-size: var(--font-label-large);
+}
+.font-label-medium {
+  font-size: var(--font-label-medium);
+}
+.font-label-small {
+  font-size: var(--font-label-small);
+}
+
+/* text align */
+.text-right {
+  text-align: right;
+}
