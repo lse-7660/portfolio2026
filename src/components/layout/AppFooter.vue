@@ -31,10 +31,12 @@ import { PhCaretRight } from '@phosphor-icons/vue'
           ><a href="mailto:thddms355@naver.com">thddms355@naver.com</a>
           <span class="font-bold">Phone</span><a href="tel:01076609251">010.7660.9251</a>
         </p>
-        <p class="detail-info-right">
-          <a href="" target="_blank">job korea <PhCaretRight /></a>
+        <!-- <p class="detail-info-right">
+          <a href="https://www.jobkorea.co.kr/User/Resume/View?rNo=30343298" target="_blank"
+            >job korea <PhCaretRight
+          /></a>
           <a href="" target="_blank">saramin <PhCaretRight /></a>
-        </p>
+        </p> -->
       </div>
     </div>
   </footer>
