@@ -6,10 +6,15 @@ import { PhCaretRight } from '@phosphor-icons/vue'
   <footer class="inline-padding">
     <div class="footer-text font-prog">CONTACT ME</div>
     <div class="footer-subtext text-right">
-      Lorem ipsum dolor sit amet consectetur. <br />
-      In vestibulum turpis aenean sollicitudin orci tortor. <br />
-      Posuere sit vulputate quis ultrices amet odio adipiscing nec. <br />
-      Lectus tempor natoque nunc eget massa libero massa.
+      <p>FROM IDEA TO INTERFACE</p>
+      <br />
+      <div class="gray-subtext">
+        <span>I PLAN THE STRUCTURE</span>
+        <span class="middle-point-wrap centering"><span class="middle-point"></span></span>
+        <span>I DESIGN THE EXPERIENCE</span>
+        <span class="middle-point-wrap centering"><span class="middle-point"></span></span>
+        <span>I BUILD WITH CODE</span>
+      </div>
     </div>
     <div class="footer-content-wrap gray-0">
       <div class="logo-area">
@@ -52,6 +57,12 @@ footer {
 }
 .footer-subtext {
   padding-block: var(--space-4);
+}
+.footer-subtext > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 }
 .footer-content-wrap {
   padding: var(--space-7);
