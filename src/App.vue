@@ -4,9 +4,9 @@ import AppHeader from './components/layout/AppHeader.vue'
 </script>
 
 <template>
-  <AppHeader />
+  <AppHeader v-if="$route.meta.isHeader !== false" />
   <main><RouterView /></main>
-  <AppFooter />
+  <AppFooter v-if="$route.meta.isHeader !== false" />
 </template>
 
 <style scoped></style>

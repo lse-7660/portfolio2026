@@ -7,35 +7,6 @@ import { motion, useScroll, useTransform } from 'motion-v'
 import MotionUpward from '@/components/motion/MotionUpward.vue'
 import MotionPadding from '@/components/motion/MotionPadding.vue'
 
-// display animation
-const displayText = ref(['', '', '', '']) // Vue 반응형 변수 가정
-const specialChars = ['%', '#', '@', '$', '&']
-const finalChars = ['I', 'D', 'E', 'A']
-
-const startSequence = () => {
-  const changeCounts = new Array(finalChars.length).fill(0)
-
-  const interval = setInterval(() => {
-    let allFinished = true
-
-    for (let i = 0; i < finalChars.length; i++) {
-      if (changeCounts[i] < 6 + i * 2) {
-        const randomIdx = Math.floor(Math.random() * specialChars.length)
-        displayText.value[i] = specialChars[randomIdx]
-
-        changeCounts[i]++
-        allFinished = false
-      } else {
-        displayText.value[i] = finalChars[i]
-      }
-    }
-
-    if (allFinished) {
-      clearInterval(interval)
-    }
-  }, 100)
-}
-
 // name image height
 const imageRef = ref(null)
 const calculatedHeight = ref(0) // 스타일 변수로 쓸 높이 값
@@ -54,7 +25,6 @@ const updateHeight = () => {
 
 // viewport resizing
 onMounted(() => {
-  startSequence()
   window.addEventListener('resize', updateHeight)
   updateHeight()
   if (imageRef.value) {
@@ -129,34 +99,38 @@ const handleLeaveText = (id) => {
 <template>
   <CursorEffect :introHovered="isTextHovered" />
   <div class="relative">
-    <motion.div class="display-name inline-padding" :style="{ bottom: nameYPosition }">
+    <motion.div
+      :initial="{ y: 10, opacity: 0 }"
+      :animate="{ y: 0, opacity: 1 }"
+      :transition="{ duration: 0.8, ease: 'easeOut' }"
+      class="display-name inline-padding"
+      :style="{ bottom: nameYPosition }"
+    >
       <img ref="imageRef" src="/main/LEE SONG EUN.png" alt="" />
     </motion.div>
 
     <div class="main-section section-display inline-padding">
       <div class="display-bottom-area font-heading-xlarge gray-0 font-bold">
         <div>
-          FROM
-          <span v-for="(char, index) in displayText" :key="index">
-            {{ char }}
-          </span>
-          <motion.p
-            :initial="{ y: 10, opacity: 0 }"
-            :animate="{ y: 0, opacity: 1 }"
-            :transition="{ duration: 0.8, delay: 1.8, ease: 'easeOut' }"
-            >TO INTERFACE</motion.p
-          >
+          FROM IDEA
+
+          <p>TO INTERFACE</p>
         </div>
       </div>
 
-      <div class="display-top-area gray-0">
+      <motion.div
+        :initial="{ y: 10, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :transition="{ duration: 0.8, delay: 0.5, ease: 'easeOut' }"
+        class="display-top-area gray-0"
+      >
         <div class="font-heading-small font-medium">END-TO-END FRONTEND</div>
         <div class="text-right font-light">
           여러 개의 점이 모여 하나의 원이 되듯이. <br />
           기획과 디자인, 그리고 구현까지. 아이디어를 완성된 사용자 경험으로 만드는 프론트엔드 개발자
           이송은입니다.
         </div>
-      </div>
+      </motion.div>
     </div>
 
     <div class="main-section section-intro inline-padding">

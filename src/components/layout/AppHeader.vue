@@ -4,7 +4,7 @@
   <header class="inline-padding">
     <div>
       <h1 class="blind">이송은 프론트엔드 포트폴리오</h1>
-      <RouterLink to="/"><img src="/logo-sample.png" alt="logo" /></RouterLink>
+      <RouterLink to="/main"><img src="/logo-sample.png" alt="logo" /></RouterLink>
     </div>
     <div class="header-text-wrap font-label-small gray-0 text-right">
       <div>LEE SONG EUN</div>

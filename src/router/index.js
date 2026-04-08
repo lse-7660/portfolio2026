@@ -1,3 +1,4 @@
+import IntroPage from '@/views/introPage/IntroPage.vue'
 import MainPage from '@/views/mainPage/MainPage.vue'
 import ProjectDetailPage from '@/views/projectDetailPage/ProjectDetailPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -14,6 +15,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'intro',
+      component: IntroPage,
+      meta: { isHeader: false, isFooter: false },
+    },
+    {
+      path: '/main',
       name: 'main',
       component: MainPage,
     },
