@@ -7,6 +7,9 @@ const props = defineProps({
   introHovered: {
     type: Boolean,
   },
+  projectHovered: {
+    type: Boolean,
+  },
   navigationHovered: {
     type: Boolean,
   },
@@ -40,12 +43,14 @@ onUnmounted(() => {
 
 const cursorState = computed(() => {
   if (props.introHovered) return 'intro'
+  if (props.projectHovered) return 'project'
   if (props.navigationHovered) return 'navigation'
   return 'default'
 })
 
 const sizeMap = {
   default: '16px',
+  project: 'fit-content',
   navigation: 'fit-content',
   intro: '180px',
 }
@@ -66,11 +71,17 @@ const sizeMap = {
       }"
       :transition="{ duration: 0.3, ease: 'easeInOut' }"
       class="cursor-effect"
-      :class="navigationHovered && 'cursor-hovered'"
+      :class="navigationHovered || projectHovered ? 'cursor-hovered' : ''"
     >
+      <!-- icon left -->
       <div v-if="isIcon && iconPosition === 'left'" class="icon-box centering"><PhCaretLeft /></div>
-      <span v-if="iconPosition === 'right'"></span>{{ navigationHovered ? innerText : ''
+
+      <!-- innertext -->
+      <span v-if="iconPosition === 'right'"></span
+      >{{ navigationHovered || projectHovered ? innerText : ''
       }}<span v-if="iconPosition === 'left'"></span>
+
+      <!-- icon right -->
       <div v-if="isIcon && iconPosition === 'right'" class="icon-box centering">
         <PhCaretRight />
       </div>

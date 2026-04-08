@@ -94,10 +94,29 @@ const handleLeaveText = (id) => {
   isTextHovered.value = false
   hoveredTextIndex.value = null
 }
+
+// project section
+const isProjectHovered = ref(false)
+const isIcon = ref(false)
+
+const handleHoveredProject = (id) => {
+  isProjectHovered.value = true
+  isIcon.value = true
+}
+const handleLeaveProject = (id) => {
+  isProjectHovered.value = false
+  isIcon.value = false
+}
 </script>
 
 <template>
-  <CursorEffect :introHovered="isTextHovered" />
+  <CursorEffect
+    :introHovered="isTextHovered"
+    :projectHovered="isProjectHovered"
+    inner-text="VIEW PROJECT"
+    :is-icon="isIcon"
+    iconPosition="right"
+  />
   <div class="relative">
     <motion.div
       :initial="{ y: 10, opacity: 0 }"
@@ -174,21 +193,40 @@ const handleLeaveText = (id) => {
     <h2 class="font-heading-xsmall gray-subtext">PROJECTS</h2>
     <div class="project-list">
       <MotionPadding :initial-padding="20">
-        <ProjectThumbnail :data="projectsData[0]"
+        <ProjectThumbnail
+          :data="projectsData[0]"
+          @mouseenter="handleHoveredProject"
+          @mouseleave="handleLeaveProject"
       /></MotionPadding>
       <div class="grid-col-2">
         <MotionPadding :initial-padding="20">
-          <ProjectThumbnail :data="projectsData[1]" :component-ratio="1 / 1"
+          <ProjectThumbnail
+            :data="projectsData[1]"
+            :component-ratio="1 / 1"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
         /></MotionPadding>
         <MotionPadding :initial-padding="45" :delay="0.1" :animate-padding="28"
-          ><ProjectThumbnail :data="projectsData[2]" :component-ratio="4 / 3"
+          ><ProjectThumbnail
+            :data="projectsData[2]"
+            :component-ratio="4 / 3"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
         /></MotionPadding>
 
         <MotionPadding :initial-padding="30" :animate-padding="3">
-          <ProjectThumbnail :data="projectsData[3]" :component-ratio="4 / 5"
+          <ProjectThumbnail
+            :data="projectsData[3]"
+            :component-ratio="4 / 5"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
         /></MotionPadding>
         <MotionPadding :initial-padding="50" :delay="0.1" :animate-padding="25"
-          ><ProjectThumbnail :data="projectsData[4]" :component-ratio="4 / 3"
+          ><ProjectThumbnail
+            :data="projectsData[4]"
+            :component-ratio="4 / 3"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
         /></MotionPadding>
       </div>
     </div>

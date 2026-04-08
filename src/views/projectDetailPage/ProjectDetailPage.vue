@@ -119,7 +119,7 @@ const handleHoverLeave = () => {
         <p v-for="item in currentData?.description">{{ item }}</p>
       </div>
       <a :href="currentData?.siteUrl" target="_blank" class="site-link-wrap"
-        ><span>SITE</span><PhCaretRight
+        ><span class="font-label-medium">LIVE SITE</span><PhCaretRight
       /></a>
     </div>
     <div ref="displayRef" class="project-display-section">
@@ -212,7 +212,11 @@ const handleHoverLeave = () => {
           ></motion.div>
         </div>
       </div>
+      <a :href="currentData?.siteUrl" target="_blank" class="detail-section-link"
+        ><span class="font-display-xlarge font-prog text-right">LIVE SITE</span></a
+      >
     </div>
+
     <div class="navigation-section inline-padding">
       <div class="navigation-section-title font-heading-xlarge font-bold">VIEW MORE PROJECTS</div>
       <div class="navigation-wrap grid-row-2">
@@ -347,7 +351,7 @@ const handleHoverLeave = () => {
 }
 /* detail-section */
 .detail-section {
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
   border-bottom: 1px solid var(--gray-border);
 }
 .detail-section-title {
@@ -394,6 +398,13 @@ const handleHoverLeave = () => {
 .detail-item-desc img {
   width: 82px;
   aspect-ratio: 1/1;
+}
+
+.detail-section-link {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-top: var(--space-6);
 }
 
 /* navigation */
