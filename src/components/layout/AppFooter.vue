@@ -1,5 +1,9 @@
 <script setup>
 import { PhCaretRight } from '@phosphor-icons/vue'
+import { inject } from 'vue'
+
+const isMobile = inject('isMobile', false)
+const isTablet = inject('isTablet', false)
 </script>
 
 <template>
@@ -25,7 +29,9 @@ import { PhCaretRight } from '@phosphor-icons/vue'
           <div class="font-label-medium font-light">LEE SONG EUN</div>
         </div>
       </div>
-      <div class="display-area text-right font-display-medium font-bold">
+      <div
+        :class="`display-area  ${isMobile ? 'font-display-small' : 'font-display-medium text-right'} font-bold`"
+      >
         STRATEGY<br />
         UX/UI DESIGN<br />
         & FRONTEND ENGINEERING
@@ -71,6 +77,12 @@ footer {
   border-top-left-radius: var(--space-4);
   border-top-right-radius: var(--space-4);
 }
+.tablet-view .footer-content-wrap,
+.mobile-view .footer-content-wrap {
+  padding: var(--page-padding);
+  border-top-left-radius: var(--space-3);
+  border-top-right-radius: var(--space-3);
+}
 .logo-area {
   display: flex;
   flex-direction: row;
@@ -78,9 +90,16 @@ footer {
   gap: var(--space-6);
   margin-bottom: var(--space-6);
 }
+.mobile-view .logo-area {
+  gap: var(--space-4);
+}
 .logo-area a img {
-  width: var(--space-9);
-  height: var(--space-9);
+  width: calc(var(--grid-unit) * 2);
+  height: calc(var(--grid-unit) * 2);
+  max-width: var(--space-9);
+  max-height: var(--space-9);
+  min-width: var(--space-7);
+  min-height: var(--space-7);
 }
 .name-area {
   display: flex;
@@ -89,6 +108,9 @@ footer {
 }
 .display-area {
   margin-bottom: var(--space-9);
+}
+.mobile-view .display-area {
+  margin-bottom: var(--space-6);
 }
 .detail-info-area span,
 .detail-info-area a {

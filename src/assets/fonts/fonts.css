@@ -42,6 +42,32 @@
   --font-weight-light: 300;
 }
 
+/* 모바일 폰트사이즈 */
+@media (max-width: 740px) {
+  :root {
+    --font-display-xxlarge: 64px;
+    --font-display-xlarge: 48px;
+    --font-display-large: 36px;
+    --font-display-medium: 28px;
+    --font-display-small: 22px;
+    --font-display-xsmall: 18px;
+
+    --font-heading-xlarge: 32px;
+    --font-heading-large: 28px;
+    --font-heading-medium: 24px;
+    --font-heading-small: 20px;
+    --font-heading-xsmall: 18px;
+
+    --font-body-small: 14px;
+    --font-body-xsmall: 12px;
+
+    --font-label-xlarge: 24px;
+    --font-label-large: 18px;
+    --font-label-medium: 14px;
+    --font-label-small: 12px;
+  }
+}
+
 .font-prog {
   font-family: 'Prog';
   font-weight: var(--font-weight-regular);

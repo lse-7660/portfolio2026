@@ -1,11 +1,15 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import ProjectThumbnail from '@/components/mainPage/ProjectThumbnail.vue'
 import { projectsData } from '@/data/projectsData'
 import CursorEffect from '@/components/common/CursorEffect.vue'
 import { motion, useScroll, useTransform } from 'motion-v'
 import MotionUpward from '@/components/motion/MotionUpward.vue'
 import MotionPadding from '@/components/motion/MotionPadding.vue'
+
+// 반응형
+const isMobile = inject('isMobile', false)
+const isTablet = inject('isTablet', false)
 
 // name image height
 const imageRef = ref(null)
@@ -36,11 +40,14 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateHeight)
 })
 
+// display text animation
 const { scrollY } = useScroll()
 
 const nameYPosition = useTransform(scrollY, (latest) => {
   const start = viewportHeight.value + 120
+
   const end = viewportHeight.value - calculatedHeight.value - 24
+
   const range = calculatedHeight.value + 144 || 1000
 
   const progress = Math.min(Math.max(latest / range, 0), 1)
@@ -119,6 +126,7 @@ const handleLeaveProject = (id) => {
   />
   <div class="relative">
     <motion.div
+      v-if="!isMobile"
       :initial="{ y: 10, opacity: 0 }"
       :animate="{ y: 0, opacity: 1 }"
       :transition="{ duration: 0.8, ease: 'easeOut' }"
@@ -143,8 +151,17 @@ const handleLeaveProject = (id) => {
         :transition="{ duration: 0.8, delay: 0.5, ease: 'easeOut' }"
         class="display-top-area gray-0"
       >
+        <motion.div
+          v-if="isMobile"
+          :initial="{ y: 10, opacity: 0 }"
+          :animate="{ y: 0, opacity: 1 }"
+          :transition="{ duration: 0.8, ease: 'easeOut' }"
+          class="display-name"
+        >
+          <img ref="imageRef" src="/main/LEE SONG EUN.png" alt="" />
+        </motion.div>
         <div class="font-heading-small font-medium">END-TO-END FRONTEND</div>
-        <div class="text-right font-light">
+        <div class="font-light" :class="isMobile ? '' : 'text-right'">
           여러 개의 점이 모여 하나의 원이 되듯이. <br />
           기획과 디자인, 그리고 구현까지. 아이디어를 완성된 사용자 경험으로 만드는 프론트엔드 개발자
           이송은입니다.
@@ -153,7 +170,12 @@ const handleLeaveProject = (id) => {
     </div>
 
     <div class="main-section section-intro inline-padding">
-      <div class="intro-text-area" :style="{ paddingTop: `${calculatedHeight}px` }">
+      <div
+        class="intro-text-area"
+        :style="{
+          paddingTop: isTablet ? '40px' : `${calculatedHeight}px`,
+        }"
+      >
         <MotionUpward
           class="intro-text-item"
           v-for="(item, index) in introText"
@@ -165,12 +187,33 @@ const handleLeaveProject = (id) => {
             <div class="intro-tag">{{ item.tag }}</div>
             <div class="intro-text">
               {{ item.introText }}
-              <div v-if="hoveredTextIndex === index" class="intro-text intro-text-prog font-prog">
+              <div
+                v-if="hoveredTextIndex === index && !isTablet"
+                class="intro-text intro-text-prog font-prog"
+              >
                 {{ item.introText }}
               </div>
             </div>
           </div>
+          <!-- tablet -->
           <motion.div
+            v-if="isTablet"
+            :initial="{ y: 20, opacity: 0 }"
+            :animate="{
+              y: 0,
+              opacity: 1,
+            }"
+            :transition="{ duration: 0.3, ease: 'easeOut' }"
+            class="intro-text-desc"
+          >
+            <p class="font-label-medium font-medium">{{ item.title }}</p>
+            <div>
+              <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
+            </div>
+          </motion.div>
+          <!-- pc -->
+          <motion.div
+            v-else
             :initial="{ y: 20, opacity: 0 }"
             :animate="{
               y: hoveredTextIndex === index ? 0 : 20,
@@ -206,7 +249,10 @@ const handleLeaveProject = (id) => {
             @mouseenter="handleHoveredProject"
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
-        <MotionPadding :initial-padding="45" :delay="0.1" :animate-padding="28"
+        <MotionPadding
+          :initial-padding="isMobile ? 20 : 45"
+          :delay="isMobile ? 0 : 0.1"
+          :animate-padding="isMobile ? 0 : 28"
           ><ProjectThumbnail
             :data="projectsData[2]"
             :component-ratio="4 / 3"
@@ -214,14 +260,17 @@ const handleLeaveProject = (id) => {
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
 
-        <MotionPadding :initial-padding="30" :animate-padding="3">
+        <MotionPadding :initial-padding="isMobile ? 20 : 30" :animate-padding="isMobile ? 0 : 3">
           <ProjectThumbnail
             :data="projectsData[3]"
             :component-ratio="4 / 5"
             @mouseenter="handleHoveredProject"
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
-        <MotionPadding :initial-padding="50" :delay="0.1" :animate-padding="25"
+        <MotionPadding
+          :initial-padding="isMobile ? 20 : 50"
+          :delay="isMobile ? 0 : 0.1"
+          :animate-padding="isMobile ? 0 : 25"
           ><ProjectThumbnail
             :data="projectsData[4]"
             :component-ratio="4 / 3"
@@ -246,6 +295,11 @@ const handleLeaveProject = (id) => {
   padding-bottom: var(--space-7);
   background-color: var(--gray-100);
 }
+.mobile-view .section-display {
+  height: 70vh;
+  padding-bottom: var(--space-5);
+}
+
 .section-display::after {
   content: '';
   position: absolute;
@@ -257,8 +311,14 @@ const handleLeaveProject = (id) => {
   position: relative;
   z-index: 10;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
 }
+.mobile-view .display-top-area {
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .display-bottom-area {
   position: relative;
   z-index: 10;
@@ -270,6 +330,10 @@ const handleLeaveProject = (id) => {
   background-color: #000000;
   mix-blend-mode: exclusion;
 }
+
+.mobile-view .display-name {
+  position: relative;
+}
 .display-name img {
   width: 100%;
 }
@@ -278,6 +342,10 @@ const handleLeaveProject = (id) => {
   min-height: 100vh;
   background: var(--gray-0);
 }
+.mobile-view .section-intro {
+  min-height: 100%;
+}
+
 .intro-text-area {
   height: 100vh;
   display: flex;
@@ -285,12 +353,24 @@ const handleLeaveProject = (id) => {
   justify-content: center;
   gap: var(--space-8);
 }
+.mobile-view .intro-text-area {
+  height: 100%;
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-7);
+  gap: var(--space-7);
+}
+
 .intro-text-item {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
 }
+.mobile-view .intro-text-item {
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 .intro-text-display {
   display: flex;
   flex-direction: column;
@@ -332,6 +412,9 @@ const handleLeaveProject = (id) => {
   padding-top: var(--space-7);
   padding-bottom: var(--space-9);
 }
+.mobile-view .section-project {
+  padding-bottom: var(--space-7);
+}
 .section-project h2 {
   margin-bottom: var(--space-4);
 }
@@ -339,5 +422,8 @@ const handleLeaveProject = (id) => {
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
+}
+.mobile-view .project-list {
+  gap: var(--space-5);
 }
 </style>

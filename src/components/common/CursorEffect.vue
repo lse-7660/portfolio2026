@@ -1,7 +1,11 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref, Transition } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref, Transition } from 'vue'
 import { motion } from 'motion-v'
 import { PhCaretLeft, PhCaretRight } from '@phosphor-icons/vue'
+
+// 반응형
+const isMobile = inject('isMobile', false)
+const isTablet = inject('isTablet', false)
 
 const props = defineProps({
   introHovered: {
@@ -58,6 +62,7 @@ const sizeMap = {
 
 <template>
   <div
+    v-if="!isMobile && !isTablet"
     class="cursor-wrapper"
     :style="{
       transform: `translate(${x}px, ${y}px) translate(-50%, -50%)`,

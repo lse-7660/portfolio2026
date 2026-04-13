@@ -18,6 +18,12 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--unit-gap);
 }
+.mobile-view .grid-col-2 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
 
 .middle-point {
   display: inline-block;
