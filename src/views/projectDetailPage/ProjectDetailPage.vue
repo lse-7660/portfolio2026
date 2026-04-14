@@ -3,8 +3,11 @@ import CursorEffect from '@/components/common/CursorEffect.vue'
 import { projectsData } from '@/data/projectsData'
 import { PhCaretRight } from '@phosphor-icons/vue'
 import { motion, useScroll, useTransform } from 'motion-v'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, inject, nextTick, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+
+const isMobile = inject('isMobile', false)
+const isTablet = inject('isTablet', false)
 
 const route = useRoute()
 const currentRouteId = computed(() => route.params.routeId)
@@ -47,10 +50,17 @@ const handleItemLeave = () => {
 }
 // scroll
 
+const marginTopRange = computed(() => {
+  return isMobile ? ['120px', '20px'] : ['180px', '32px']
+})
+const fontSizeRange = computed(() => {
+  return isMobile ? ['12vw', '5vw'] : ['8vw', '2vw']
+})
+
 const { scrollY } = useScroll()
 const vh1 = window.innerHeight * 0.5
-const fontSize = useTransform(scrollY, [0, vh1], ['8vw', '2vw'])
-const marginTop = useTransform(scrollY, [0, vh1], ['180px', '32px'])
+const fontSize = useTransform(scrollY, [0, vh1], fontSizeRange.value)
+const marginTop = useTransform(scrollY, [0, vh1], marginTopRange.value)
 const positionLeft = useTransform(scrollY, [0, vh1 * 0.5], ['0px', '50%'])
 const transformLeft = useTransform(scrollY, [0, vh1 * 0.5], ['translateX(0)', 'translateX(-50%)'])
 
@@ -112,7 +122,7 @@ const handleHoverLeave = () => {
         <span class="font-label-medium">{{ currentData?.koreanName }}</span>
         <span class="font-label-medium gray-subtext">{{ currentData?.period }}</span>
       </div>
-      <div class="project-logo">
+      <div v-if="!isMobile" class="project-logo">
         <img src="/logo-sample.png" alt="logo" />
       </div>
       <div class="project-desc">
@@ -131,7 +141,12 @@ const handleHoverLeave = () => {
     </div>
     <div class="tech-section inline-padding">
       <div class="tech-section-wrap">
-        <div class="tech-section-title font-heading-xlarge font-bold">TECHNOLOGY USED</div>
+        <div
+          class="tech-section-title font-bold"
+          :class="isMobile ? 'font-heading-large' : 'font-heading-xlarge'"
+        >
+          TECHNOLOGY USED
+        </div>
         <div class="tech-section-content">
           <div class="tech-stack">
             <div class="font-heading-xsmall font-medium">STRATEGY & DESIGN</div>
@@ -175,7 +190,12 @@ const handleHoverLeave = () => {
       </div>
     </div>
     <div v-if="currentData?.detail.length > 0" class="detail-section inline-padding">
-      <div class="detail-section-title font-heading-xlarge font-bold">DESCRIPTION</div>
+      <div
+        class="detail-section-title font-bold"
+        :class="isMobile ? 'font-heading-large' : 'font-heading-xlarge'"
+      >
+        DESCRIPTION
+      </div>
       <div class="detail-list grid-col-2">
         <div
           class="detail-item"
@@ -186,6 +206,7 @@ const handleHoverLeave = () => {
           @mouseleave="handleItemLeave"
         >
           <motion.div
+            v-if="!isMobile"
             :initial="{ opacity: 0 }"
             :animate="{ opacity: hoveredItem === index ? 1 : 0 }"
             :transition="{ duration: 0.5 }"
@@ -210,6 +231,13 @@ const handleHoverLeave = () => {
             :while-hover="{ backgroundSize: '120%' }"
             :transition="{ duration: 0.5, ease: 'easeInOut' }"
           ></motion.div>
+
+          <div v-if="isMobile" class="detail-item-desc">
+            <div class="detail-item-desc-text">
+              <span class="font-prog font-display-medium">0{{ index + 1 }}</span>
+              <p>{{ detail?.text }}</p>
+            </div>
+          </div>
         </div>
       </div>
       <a :href="currentData?.siteUrl" target="_blank" class="detail-section-link"
@@ -218,7 +246,12 @@ const handleHoverLeave = () => {
     </div>
 
     <div class="navigation-section inline-padding">
-      <div class="navigation-section-title font-heading-xlarge font-bold">VIEW MORE PROJECTS</div>
+      <div
+        class="navigation-section-title font-bold"
+        :class="isMobile ? 'font-heading-large' : 'font-heading-xlarge'"
+      >
+        VIEW MORE PROJECTS
+      </div>
       <div class="navigation-wrap grid-row-2">
         <RouterLink :to="`/project-detail/${prevProject?.routeId}`" class="to-prev navigation">
           <div
@@ -277,6 +310,10 @@ const handleHoverLeave = () => {
   padding-top: 310px;
   padding-bottom: var(--space-6);
 }
+.mobile-view .project-intro-section {
+  padding-top: 200px;
+  padding-bottom: var(--space-6);
+}
 .project-overview {
   display: flex;
   flex-direction: row;
@@ -296,6 +333,10 @@ const handleHoverLeave = () => {
   padding-left: calc(var(--grid-unit) * 7);
   margin-top: var(--space-6);
 }
+.mobile-view .project-desc {
+  padding-left: 0;
+  margin-top: var(--space-6);
+}
 .site-link-wrap {
   display: flex;
   flex-direction: row;
@@ -304,10 +345,19 @@ const handleHoverLeave = () => {
 
   margin-top: var(--space-3);
 }
+.mobile-view .site-link-wrap {
+  margin-top: var(--space-6);
+}
+
 /* display image */
 .project-display-section {
   width: 100%;
   height: 100vh;
+  overflow: hidden;
+}
+.mobile-view .project-display-section {
+  width: 100%;
+  height: 30vh;
   overflow: hidden;
 }
 .display-image {
@@ -316,6 +366,9 @@ const handleHoverLeave = () => {
 /* tech-section */
 .tech-section {
   padding-top: var(--space-7);
+}
+.mobile-view .tech-section {
+  padding-top: var(--space-6);
 }
 .tech-section-wrap {
   display: flex;
@@ -326,9 +379,27 @@ const handleHoverLeave = () => {
   border-bottom: 1px solid var(--gray-border);
   border-top: 1px solid var(--gray-border);
 }
+.mobile-view .tech-section-wrap {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  border-bottom: 1px solid var(--gray-border);
+  border-top: 0px solid var(--gray-border);
+}
+.mobile-view .tech-section-title {
+  width: 100%;
+  border-top: 1px solid var(--gray-border);
+  border-bottom: 1px solid var(--gray-border);
+  padding-block: var(--space-2);
+}
+
 .tech-section-content {
   display: flex;
   flex-direction: row;
+}
+.mobile-view .tech-section-content {
+  gap: var(--space-4);
 }
 .tech-stack {
   display: flex;
@@ -340,6 +411,11 @@ const handleHoverLeave = () => {
 
   text-align: right;
 }
+.mobile-view .tech-stack {
+  padding-inline: 0;
+  border-left: 0px solid var(--gray-border);
+  text-align: left;
+}
 .tech-stack.front-stack {
   padding-right: 0;
 }
@@ -348,6 +424,9 @@ const handleHoverLeave = () => {
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+}
+.mobile-view .stack-list {
+  justify-content: flex-start;
 }
 /* detail-section */
 .detail-section {
@@ -388,10 +467,21 @@ const handleHoverLeave = () => {
   padding-bottom: var(--space-5);
   padding-inline: var(--space-5);
 }
+.mobile-view .detail-item-desc {
+  padding-top: var(--space-3);
+  padding-bottom: 0;
+  padding-inline: 0;
+}
 .detail-item-desc-text {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+
+  width: inherit;
+}
+.mobile-view .detail-item-desc-text {
+  flex-direction: row;
+  align-items: center;
 
   width: inherit;
 }

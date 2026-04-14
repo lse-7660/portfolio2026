@@ -103,7 +103,7 @@ export const projectsData = [
   },
   {
     routeId: 'leyve-mobile-app',
-    name: 'Leyve Mobile App',
+    name: 'Leyve App',
     koreanName: '레이브 모바일 앱',
     period: '2025.10 - 2025.11',
     siteUrl: 'https://play.google.com/store/apps/details?id=com.leysys.leyve&hl=ko',

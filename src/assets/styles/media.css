@@ -35,7 +35,7 @@
 }
 @media (max-width: 740px) {
   :root {
-    --header-height: 64px;
+    --header-height: 48px;
     --page-padding: 16px;
     --unit-gap: var(--space-3);
   }

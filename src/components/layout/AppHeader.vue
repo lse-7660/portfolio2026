@@ -38,6 +38,10 @@ img {
   height: 48px;
   width: 48px;
 }
+.mobile-view img {
+  height: 38px;
+  width: 38px;
+}
 .header-text-wrap {
   display: flex;
   flex-direction: column;

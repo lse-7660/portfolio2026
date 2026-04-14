@@ -23,7 +23,7 @@ provide('isTablet', readonly(isTablet))
 </script>
 
 <template>
-  <AppHeader v-if="$route.meta.isHeader !== false" />
+  <AppHeader v-if="$route.meta.isHeader !== false" :class="viewClass" />
   <main :class="viewClass">
     <RouterView />
   </main>

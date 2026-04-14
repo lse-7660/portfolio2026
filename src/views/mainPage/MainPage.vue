@@ -424,6 +424,6 @@ const handleLeaveProject = (id) => {
   gap: var(--space-8);
 }
 .mobile-view .project-list {
-  gap: var(--space-5);
+  gap: var(--space-3);
 }
 </style>
