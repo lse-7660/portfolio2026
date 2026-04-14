@@ -6,6 +6,10 @@
   padding-top: var(--space-7);
   padding-bottom: var(--space-7);
 }
+.mobile-view .block-padding {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
+}
 .grid-row-2 {
   width: 100%;
   display: flex;
@@ -35,6 +39,10 @@
 .project-stack {
   display: flex;
   flex-direction: row;
+}
+.mobile-view .project-stack {
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 .project-stack-item {
   display: flex;
