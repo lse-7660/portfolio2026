@@ -189,12 +189,31 @@ const handleHoverLeave = () => {
         </div>
       </div>
     </div>
-    <div v-if="currentData?.detail.length > 0" class="detail-section inline-padding">
+    <div v-if="currentData?.task.length > 0" class="task-section inline-padding">
       <div
-        class="detail-section-title font-bold"
+        class="task-section-title section-title font-bold"
         :class="isMobile ? 'font-heading-large' : 'font-heading-xlarge'"
       >
-        DESCRIPTION
+        KEY TASKS
+      </div>
+      <div class="task-section-desc">
+        <div class="task-section-desc-wrap" v-for="(task, index) in currentData?.task" :key="index">
+          <div class="task-section-desc-index"></div>
+          <div class="task-section-desc-item">
+            <p class="task-title font-label-medium font-bold">
+              {{ task?.title }}
+            </p>
+            <p class="task-desc">{{ task?.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="currentData?.detail.length > 0" class="detail-section inline-padding">
+      <div
+        class="detail-section-title section-title font-bold"
+        :class="isMobile ? 'font-heading-large' : 'font-heading-xlarge'"
+      >
+        GALLERY
       </div>
       <div class="detail-list grid-col-2">
         <div
@@ -428,12 +447,53 @@ const handleHoverLeave = () => {
 .mobile-view .stack-list {
   justify-content: flex-start;
 }
+
+/* task-section */
+.task-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--gray-border);
+}
+.tablet-view .task-section,
+.mobile-view .task-section {
+  flex-direction: column;
+}
+.task-section-desc {
+  width: calc(var(--grid-unit) * 6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-6);
+}
+.tablet-view .task-section-desc,
+.mobile-view .task-section-desc {
+  width: 100%;
+  padding-top: 0;
+}
+.task-section-desc-wrap {
+  display: flex;
+  flex-direction: row;
+  /* gap: var(--space-3); */
+}
+/* .task-section-desc-index {
+  width: 3px;
+  height: auto;
+  background-color: var(--gray-text);
+} */
+.task-section-desc-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 /* detail-section */
 .detail-section {
   padding-bottom: var(--space-6);
   border-bottom: 1px solid var(--gray-border);
 }
-.detail-section-title {
+.section-title {
   padding-block: var(--space-4);
 }
 .detail-item {

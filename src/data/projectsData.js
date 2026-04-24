@@ -14,8 +14,26 @@ export const projectsData = [
       '레이아웃에 변주를 주어 시각적 리듬을 형성했다.',
       '채도 높은 포인트 컬러를 활용해 젊고 도전적인 브랜드 이미지를 표현했다.',
     ],
-    designStack: ['figma', 'aftereffect'],
+    designStack: ['figma', 'aftereffect', 'motion'],
     frontStack: ['vue'],
+    task: [
+      {
+        title: '인터랙티브 UI 구현',
+        desc: 'motion.js 라이브러리를 활용, 사용자 마우스 커서 추적 및 스크롤 기반 애니메이션 구현으로 고도화된 시각적 경험 제공',
+      },
+      {
+        title: '모션 그래픽 최적화',
+        desc: 'After Effects로 작업한 모션 디자인 요소를 웹 환경에 최적화하여 구현',
+      },
+      {
+        title: '타이포그래피 디자인',
+        desc: '타이포그래피 중심의 UI 디자인으로 신뢰성 있는 IT 기업의 브랜드 이미지 구축',
+      },
+      {
+        title: 'Troubleshooting',
+        desc: '데이터 바인딩 시 null 체크 로직(Optional Chaining) 부재로 인한 렌더링 오류 개선 및 안정성 확보',
+      },
+    ],
     detail: [
       { imgUrl: '/projects/leysys-1.png', text: '상황에 따른 커서 이펙트로 몰입감을 더했다.' },
       {
@@ -49,6 +67,24 @@ export const projectsData = [
     ],
     designStack: ['figma'],
     frontStack: ['vue'],
+    task: [
+      {
+        title: '실시간 견적 산출 로직 구현',
+        desc: 'Vue의 반응형 시스템을 활용, 사용자 입력과 동시에 복잡한 견적 금액이 실시간으로 계산되는 인터랙티브 UI 구현',
+      },
+      {
+        title: '데이터 무결성 확보',
+        desc: '유효성 검증(Validation) 로직으로 비정상 데이터 유입 차단 및 사용자 입력 편의성 개선',
+      },
+      {
+        title: '백엔드 협업 및 연동',
+        desc: 'Java 기반 API 연동으로 이용 문의 및 서비스 신청 프로세스 구축',
+      },
+      {
+        title: '사용자 경험 재구성',
+        desc: '기존 페이지의 정보를 분석하여 서비스 신청까지의 경로를 단축하는 직관적인 UX 흐름 기획 및 반영',
+      },
+    ],
     detail: [
       {
         imgUrl: '/projects/leyvecloud-1.png',
@@ -85,6 +121,16 @@ export const projectsData = [
     ],
     designStack: ['figma'],
     frontStack: ['vue'],
+    task: [
+      {
+        title: '로직 재사용 및 효율화',
+        desc: '기존 개발된 견적 산출 모듈을 프로젝트 요구사항에 맞춰 최적화하여 개발 공수 단축',
+      },
+      {
+        title: 'API 통신 안정화',
+        desc: 'Java 기반 백엔드와 연동하여 서비스 이용 문의 시스템 구축',
+      },
+    ],
     detail: [
       {
         imgUrl: '/projects/bravevote-1.png',
@@ -117,7 +163,21 @@ export const projectsData = [
       '기존 디자인 톤을 유지하면서 새롭게 디자인하고 개발했다.',
     ],
     designStack: ['figma'],
-    frontStack: ['vue'],
+    frontStack: ['vue', 'Capacitor', ' Xcode', 'Android Studio'],
+    task: [
+      {
+        title: '하이브리드 앱 아키텍처 설계',
+        desc: 'Vue.js 기반 웹 애플리케이션을 Capacitor를 활용해 iOS/Android 하이브리드 앱으로 전환하여 유지보수 효율성 극대화',
+      },
+      {
+        title: '스토어 런칭 주도',
+        desc: '각 플랫폼(App Store, Play Store)의 심사 가이드라인을 준수하여 보안 및 정책 검토 후 최종 배포 완료',
+      },
+      {
+        title: '디자인 시스템 확장',
+        desc: '기존 디자인 가이드를 준수하면서 신규 페이지를 직접 설계 및 구현하여 일관성 있는 브랜드 경험 제공',
+      },
+    ],
     detail: [
       {
         imgUrl: '/projects/leyveapp-1.png',
@@ -154,6 +214,7 @@ export const projectsData = [
     ],
     designStack: ['figma', 'photoshop'],
     frontStack: ['react'],
+    task: [],
     detail: [],
   },
 ]
