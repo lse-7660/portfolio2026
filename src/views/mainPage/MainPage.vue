@@ -3,9 +3,13 @@ import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import ProjectThumbnail from '@/components/mainPage/ProjectThumbnail.vue'
 import { projectsData } from '@/data/projectsData'
 import CursorEffect from '@/components/common/CursorEffect.vue'
-import { motion, useScroll, useTransform } from 'motion-v'
+import { motion } from 'motion-v'
 import MotionUpward from '@/components/motion/MotionUpward.vue'
 import MotionPadding from '@/components/motion/MotionPadding.vue'
+import { previousPath } from '@/store/previousPath'
+
+const isPreviousPathIntro = ref(false)
+const isTransitioning = ref(false)
 
 // 반응형
 const isMobile = inject('isMobile', false)
@@ -13,7 +17,7 @@ const isTablet = inject('isTablet', false)
 
 // name image height
 const imageRef = ref(null)
-const calculatedHeight = ref(0) // 스타일 변수로 쓸 높이 값
+const calculatedHeight = ref(0)
 
 const resizeObserver = new ResizeObserver((entries) => {
   for (let entry of entries) {
@@ -29,6 +33,12 @@ const updateHeight = () => {
 
 // viewport resizing
 onMounted(() => {
+  if (previousPath.value === '/') {
+    isPreviousPathIntro.value = true
+    setTimeout(() => {
+      isTransitioning.value = true
+    }, 100)
+  }
   window.addEventListener('resize', updateHeight)
   updateHeight()
   if (imageRef.value) {
@@ -38,23 +48,6 @@ onMounted(() => {
 onUnmounted(() => {
   resizeObserver.disconnect()
   window.removeEventListener('resize', updateHeight)
-})
-
-// display text animation
-const { scrollY } = useScroll()
-
-const nameYPosition = useTransform(scrollY, (latest) => {
-  const start = viewportHeight.value + 120
-
-  const end = viewportHeight.value - calculatedHeight.value - 24
-
-  const range = calculatedHeight.value + 144 || 1000
-
-  const progress = Math.min(Math.max(latest / range, 0), 1)
-
-  const currentPos = start + (end - start) * progress
-
-  return `${currentPos}px`
 })
 
 // intro section
@@ -117,6 +110,12 @@ const handleLeaveProject = (id) => {
 </script>
 
 <template>
+  <div
+    v-if="isPreviousPathIntro"
+    class="page-transition-in"
+    :class="isTransitioning ? 'is-active' : ''"
+  ></div>
+
   <CursorEffect
     :introHovered="isTextHovered"
     :projectHovered="isProjectHovered"
@@ -131,20 +130,12 @@ const handleLeaveProject = (id) => {
       :animate="{ y: 0, opacity: 1 }"
       :transition="{ duration: 0.8, ease: 'easeOut' }"
       class="display-name inline-padding"
-      :style="{ bottom: nameYPosition }"
+      :style="{ top: nameYPosition }"
     >
       <img ref="imageRef" src="/main/LEE SONG EUN.png" alt="" />
     </motion.div>
 
     <div class="main-section section-display inline-padding">
-      <div class="display-bottom-area font-heading-xlarge gray-0 font-bold">
-        <div>
-          FROM IDEA
-
-          <p>TO INTERFACE</p>
-        </div>
-      </div>
-
       <motion.div
         :initial="{ y: 10, opacity: 0 }"
         :animate="{ y: 0, opacity: 1 }"
@@ -283,6 +274,22 @@ const handleLeaveProject = (id) => {
 </template>
 
 <style scoped>
+/* transition */
+.page-transition-in {
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100vh;
+
+  background-color: var(--gray-0);
+
+  transition: height 0.3s ease-out;
+}
+.page-transition-in.is-active {
+  height: 0;
+}
 /* display section */
 .section-display {
   position: relative;
@@ -300,13 +307,6 @@ const handleLeaveProject = (id) => {
   padding-bottom: var(--space-5);
 }
 
-.section-display::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url(/main/display-bg.jpg);
-  opacity: 0.2;
-}
 .display-top-area {
   position: relative;
   z-index: 10;

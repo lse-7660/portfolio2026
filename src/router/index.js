@@ -1,3 +1,4 @@
+import { previousPath } from '@/store/previousPath'
 import IntroPage from '@/views/introPage/IntroPage.vue'
 import MainPage from '@/views/mainPage/MainPage.vue'
 import ProjectDetailPage from '@/views/projectDetailPage/ProjectDetailPage.vue'
@@ -35,6 +36,11 @@ const router = createRouter({
       component: MainPage,
     },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  previousPath.value = from.path
+  next()
 })
 
 export default router
