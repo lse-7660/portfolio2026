@@ -39,7 +39,7 @@ onMounted(() => {
   startSequence()
   setTimeout(() => {
     isTransitioning.value = true
-  }, 3500)
+  }, 3800)
   setTimeout(() => {
     router.push('/main')
   }, 4500)

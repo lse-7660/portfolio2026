@@ -2,6 +2,10 @@
   font-family: 'Prog';
   src: url(/src/assets/fonts/prog-bot.regular.ttf);
 }
+@font-face {
+  font-family: 'Kenoky';
+  src: url(/src/assets/fonts/KenokyLight.ttf);
+}
 
 @font-face {
   font-family: 'Pretendard';
@@ -38,8 +42,8 @@
   --font-weight-extrabold: 800;
   --font-weight-bold: 700;
   --font-weight-medium: 500;
-  --font-weight-regular: 400;
-  --font-weight-light: 300;
+  --font-weight-regular: 300;
+  --font-weight-light: 200;
 }
 
 /* 모바일 폰트사이즈 */
@@ -71,6 +75,15 @@
 .font-prog {
   font-family: 'Prog';
   font-weight: var(--font-weight-regular);
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}
+
+.font-kenoky {
+  font-family: 'Kenoky';
+  font-weight: var(--font-weight-regular);
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }
 
 /* font style class */

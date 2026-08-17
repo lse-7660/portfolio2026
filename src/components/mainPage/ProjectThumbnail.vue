@@ -22,7 +22,7 @@ const props = defineProps({
           aspectRatio: componentRatio,
         }"
       >
-        <motion.div
+        <!-- <motion.div
           :style="{ inset: 0, transformOrigin: 'bottom' }"
           :initial="{ height: '100%' }"
           :while-in-view="{ height: 0 }"
@@ -40,7 +40,7 @@ const props = defineProps({
               aspectRatio: componentRatio,
             }"
           ></div>
-        </motion.div>
+        </motion.div> -->
       </div>
 
       <div class="project-info">

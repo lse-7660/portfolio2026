@@ -13,7 +13,7 @@
   --space-11: 180px;
   --space-12: 240px;
 
-  --page-padding: 24px;
+  --page-padding: 80px;
   --page-max-width: 2560px;
   --unit-gap: var(--space-4);
   --grid-unit: calc((var(--page-max-width) - var(--page-padding) * 2) / 12);

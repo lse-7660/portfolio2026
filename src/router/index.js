@@ -38,9 +38,9 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   previousPath.value = from.path
-  next()
+  return true
 })
 
 export default router

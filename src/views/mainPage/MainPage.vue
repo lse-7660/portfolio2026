@@ -3,17 +3,24 @@ import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import ProjectThumbnail from '@/components/mainPage/ProjectThumbnail.vue'
 import { projectsData } from '@/data/projectsData'
 import CursorEffect from '@/components/common/CursorEffect.vue'
-import { motion } from 'motion-v'
+import { motion, useScroll } from 'motion-v'
 import MotionUpward from '@/components/motion/MotionUpward.vue'
 import MotionPadding from '@/components/motion/MotionPadding.vue'
 import { previousPath } from '@/store/previousPath'
 
 const isPreviousPathIntro = ref(false)
 const isTransitioning = ref(false)
+const animationDelayTime = ref(0)
 
 // 반응형
 const isMobile = inject('isMobile', false)
 const isTablet = inject('isTablet', false)
+
+// viewport height
+const viewportHeight = ref(0)
+const updateViewportHeight = () => {
+  viewportHeight.value = window.innerHeight
+}
 
 // name image height
 const imageRef = ref(null)
@@ -25,29 +32,41 @@ const resizeObserver = new ResizeObserver((entries) => {
   }
 })
 
-// viewport height
-const viewportHeight = ref(window.innerHeight)
-const updateHeight = () => {
-  viewportHeight.value = window.innerHeight
-}
+// Y scroll for displayName
+const { scrollY } = useScroll()
+const displayNameTopPosition = ref(88)
+let unsubscribe
 
-// viewport resizing
 onMounted(() => {
+  // page transition: intro > main
   if (previousPath.value === '/') {
     isPreviousPathIntro.value = true
+    animationDelayTime.value = 0.1
     setTimeout(() => {
       isTransitioning.value = true
-    }, 100)
+    }, animationDelayTime * 1000)
   }
-  window.addEventListener('resize', updateHeight)
-  updateHeight()
+
   if (imageRef.value) {
     resizeObserver.observe(imageRef.value)
   }
+
+  updateViewportHeight()
+  window.addEventListener('resize', updateViewportHeight)
+
+  displayNameTopPosition.value = scrollY.get() + 120
+  unsubscribe = scrollY.on('change', (latest) => {
+    if (latest < viewportHeight.value) {
+      displayNameTopPosition.value = latest + 120
+    } else {
+      displayNameTopPosition.value = viewportHeight.value + 120
+    }
+  })
 })
 onUnmounted(() => {
   resizeObserver.disconnect()
-  window.removeEventListener('resize', updateHeight)
+  window.removeEventListener('resize', updateViewportHeight)
+  unsubscribe?.()
 })
 
 // intro section
@@ -124,151 +143,157 @@ const handleLeaveProject = (id) => {
     iconPosition="right"
   />
   <div class="relative">
-    <motion.div
-      v-if="!isMobile"
-      :initial="{ y: 10, opacity: 0 }"
-      :animate="{ y: 0, opacity: 1 }"
-      :transition="{ duration: 0.8, ease: 'easeOut' }"
-      class="display-name inline-padding"
-      :style="{ top: nameYPosition }"
-    >
-      <img ref="imageRef" src="/main/LEE SONG EUN.png" alt="" />
+    <motion.div :style="{ top: `${displayNameTopPosition}px` }" class="display-name-wrap">
+      <motion.div
+        v-if="!isMobile"
+        :initial="{ y: 20, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :transition="{ duration: 1.2, delay: animationDelayTime + 0.3, ease: 'easeOut' }"
+        class="display-name inline-padding"
+        ><div class="display-title gray-0 font-kenoky">
+          <div>END-TO-END</div>
+          <div>FRONTEND</div>
+        </div>
+        <!-- <img ref="imageRef" src="/main/displayText.png" alt="" /> -->
+      </motion.div>
     </motion.div>
 
     <div class="main-section section-display inline-padding">
       <motion.div
+        v-if="isMobile"
         :initial="{ y: 10, opacity: 0 }"
         :animate="{ y: 0, opacity: 1 }"
-        :transition="{ duration: 0.8, delay: 0.5, ease: 'easeOut' }"
-        class="display-top-area gray-0"
+        :transition="{ duration: 0.8, ease: 'easeOut' }"
+        class="display-name"
+        ><div class="display-title gray-0 font-kenoky">
+          <div>END-TO-END</div>
+          <div>FRONTEND</div>
+        </div>
+        <!-- <img ref="imageRef" src="/main/displayText.png" alt="" /> -->
+      </motion.div>
+      <motion.div
+        :initial="{ y: 10, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :transition="{ duration: 1.2, delay: animationDelayTime + 0.5, ease: 'easeOut' }"
+        class="display-desc-area gray-0"
       >
-        <motion.div
-          v-if="isMobile"
-          :initial="{ y: 10, opacity: 0 }"
-          :animate="{ y: 0, opacity: 1 }"
-          :transition="{ duration: 0.8, ease: 'easeOut' }"
-          class="display-name"
-        >
-          <img ref="imageRef" src="/main/LEE SONG EUN.png" alt="" />
-        </motion.div>
-        <div class="font-heading-small font-medium">END-TO-END FRONTEND</div>
+        <div class="font-kenoky font-heading-medium font-medium">LEE SONG EUN</div>
+
         <div class="font-light" :class="isMobile ? '' : 'text-right'">
-          여러 개의 점이 모여 하나의 원이 되듯이. <br />
-          기획과 디자인, 그리고 구현까지. 아이디어를 완성된 사용자 경험으로 만드는 프론트엔드 개발자
+          기획과 디자인, 그리고 구현까지.<br />아이디어를 사용자 경험으로 완성하는 프론트엔드 개발자
           이송은입니다.
         </div>
       </motion.div>
     </div>
+    <div class="main-section section-project inline-padding">
+      <h2 class="font-label-medium font-regular gray-subtext">PROJECTS</h2>
+      <div class="project-list">
+        <MotionPadding :initial-padding="20">
+          <ProjectThumbnail
+            :data="projectsData[0]"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
+        /></MotionPadding>
+        <div class="grid-col-2">
+          <MotionPadding :initial-padding="20">
+            <ProjectThumbnail
+              :data="projectsData[1]"
+              :component-ratio="1 / 1"
+              @mouseenter="handleHoveredProject"
+              @mouseleave="handleLeaveProject"
+          /></MotionPadding>
+          <MotionPadding
+            :initial-padding="isTablet ? 20 : 45"
+            :delay="isTablet ? 0 : 0.1"
+            :animate-padding="isTablet ? 0 : 22"
+            ><ProjectThumbnail
+              :data="projectsData[2]"
+              :component-ratio="4 / 3"
+              @mouseenter="handleHoveredProject"
+              @mouseleave="handleLeaveProject"
+          /></MotionPadding>
 
-    <div class="main-section section-intro inline-padding">
-      <div
-        class="intro-text-area"
-        :style="{
-          paddingTop: isTablet ? '40px' : `${calculatedHeight}px`,
-        }"
-      >
-        <MotionUpward
-          class="intro-text-item"
-          v-for="(item, index) in introText"
-          :key="index"
-          @mouseenter="handleHoveredText(index)"
-          @mouseleave="handleLeaveText"
-        >
-          <div class="intro-text-display">
-            <div class="intro-tag">{{ item.tag }}</div>
-            <div class="intro-text">
-              {{ item.introText }}
-              <div
-                v-if="hoveredTextIndex === index && !isTablet"
-                class="intro-text intro-text-prog font-prog"
-              >
-                {{ item.introText }}
-              </div>
-            </div>
-          </div>
-          <!-- tablet -->
-          <motion.div
-            v-if="isTablet"
-            :initial="{ y: 20, opacity: 0 }"
-            :animate="{
-              y: 0,
-              opacity: 1,
-            }"
-            :transition="{ duration: 0.3, ease: 'easeOut' }"
-            class="intro-text-desc"
-          >
-            <p class="font-label-medium font-medium">{{ item.title }}</p>
-            <div>
-              <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
-            </div>
-          </motion.div>
-          <!-- pc -->
-          <motion.div
-            v-else
-            :initial="{ y: 20, opacity: 0 }"
-            :animate="{
-              y: hoveredTextIndex === index ? 0 : 20,
-              opacity: hoveredTextIndex === index ? 1 : 0,
-            }"
-            :transition="{ duration: 0.3, ease: 'easeOut' }"
-            class="intro-text-desc text-right"
-          >
-            <p class="font-label-medium font-medium">{{ item.title }}</p>
-            <div>
-              <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
-            </div>
-          </motion.div>
-        </MotionUpward>
+          <MotionPadding :initial-padding="isTablet ? 20 : 30" :animate-padding="isTablet ? 0 : 3">
+            <ProjectThumbnail
+              :data="projectsData[3]"
+              :component-ratio="3 / 4"
+              @mouseenter="handleHoveredProject"
+              @mouseleave="handleLeaveProject"
+          /></MotionPadding>
+          <MotionPadding
+            :initial-padding="isTablet ? 20 : 50"
+            :delay="isTablet ? 0 : 0.1"
+            :animate-padding="isTablet ? 0 : 25"
+            ><ProjectThumbnail
+              :data="projectsData[4]"
+              :component-ratio="1 / 1"
+              @mouseenter="handleHoveredProject"
+              @mouseleave="handleLeaveProject"
+          /></MotionPadding>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="main-section section-project inline-padding">
-    <h2 class="font-heading-xsmall gray-subtext">PROJECTS</h2>
-    <div class="project-list">
-      <MotionPadding :initial-padding="20">
-        <ProjectThumbnail
-          :data="projectsData[0]"
-          @mouseenter="handleHoveredProject"
-          @mouseleave="handleLeaveProject"
-      /></MotionPadding>
-      <div class="grid-col-2">
-        <MotionPadding :initial-padding="20">
-          <ProjectThumbnail
-            :data="projectsData[1]"
-            :component-ratio="1 / 1"
-            @mouseenter="handleHoveredProject"
-            @mouseleave="handleLeaveProject"
-        /></MotionPadding>
-        <MotionPadding
-          :initial-padding="isMobile ? 20 : 45"
-          :delay="isMobile ? 0 : 0.1"
-          :animate-padding="isMobile ? 0 : 28"
-          ><ProjectThumbnail
-            :data="projectsData[2]"
-            :component-ratio="4 / 3"
-            @mouseenter="handleHoveredProject"
-            @mouseleave="handleLeaveProject"
-        /></MotionPadding>
-
-        <MotionPadding :initial-padding="isMobile ? 20 : 30" :animate-padding="isMobile ? 0 : 3">
-          <ProjectThumbnail
-            :data="projectsData[3]"
-            :component-ratio="4 / 5"
-            @mouseenter="handleHoveredProject"
-            @mouseleave="handleLeaveProject"
-        /></MotionPadding>
-        <MotionPadding
-          :initial-padding="isMobile ? 20 : 50"
-          :delay="isMobile ? 0 : 0.1"
-          :animate-padding="isMobile ? 0 : 25"
-          ><ProjectThumbnail
-            :data="projectsData[4]"
-            :component-ratio="4 / 3"
-            @mouseenter="handleHoveredProject"
-            @mouseleave="handleLeaveProject"
-        /></MotionPadding>
-      </div>
+  <div class="main-section section-intro inline-padding">
+    <div
+      class="intro-text-area"
+      :style="{
+        paddingTop: isTablet ? '40px' : `${calculatedHeight}px`,
+      }"
+    >
+      <MotionUpward
+        class="intro-text-item"
+        v-for="(item, index) in introText"
+        :key="index"
+        @mouseenter="handleHoveredText(index)"
+        @mouseleave="handleLeaveText"
+      >
+        <div class="intro-text-display">
+          <div class="intro-tag">{{ item.tag }}</div>
+          <div class="intro-text">
+            {{ item.introText }}
+            <div
+              v-if="hoveredTextIndex === index && !isTablet"
+              class="intro-text intro-text-prog font-prog"
+            >
+              {{ item.introText }}
+            </div>
+          </div>
+        </div>
+        <!-- tablet -->
+        <motion.div
+          v-if="isTablet"
+          :initial="{ y: 20, opacity: 0 }"
+          :animate="{
+            y: 0,
+            opacity: 1,
+          }"
+          :transition="{ duration: 0.3, ease: 'easeOut' }"
+          class="intro-text-desc"
+        >
+          <p class="font-label-medium font-medium">{{ item.title }}</p>
+          <div>
+            <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
+          </div>
+        </motion.div>
+        <!-- pc -->
+        <motion.div
+          v-else
+          :initial="{ y: 20, opacity: 0 }"
+          :animate="{
+            y: hoveredTextIndex === index ? 0 : 20,
+            opacity: hoveredTextIndex === index ? 1 : 0,
+          }"
+          :transition="{ duration: 0.3, ease: 'easeOut' }"
+          class="intro-text-desc text-right"
+        >
+          <p class="font-label-medium font-medium">{{ item.title }}</p>
+          <div>
+            <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
+          </div>
+        </motion.div>
+      </MotionUpward>
     </div>
   </div>
 </template>
@@ -303,36 +328,43 @@ const handleLeaveProject = (id) => {
   background-color: var(--gray-100);
 }
 .mobile-view .section-display {
-  height: 70vh;
+  height: 80vh;
+  justify-content: flex-start;
+  gap: var(--space-9);
   padding-bottom: var(--space-5);
 }
 
-.display-top-area {
+.display-desc-area {
   position: relative;
   z-index: 10;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.mobile-view .display-top-area {
   flex-direction: column;
-  gap: var(--space-2);
+  align-items: flex-end;
+  gap: var(--space-4);
+  padding-top: 40vh;
 }
+.mobile-view .display-desc-area {
+  padding-top: 0;
 
-.display-bottom-area {
-  position: relative;
-  z-index: 10;
+  align-items: flex-start;
+  gap: var(--space-4);
 }
-.display-name {
+.display-name-wrap {
   position: absolute;
   z-index: 10;
   width: 100%;
   background-color: #000000;
   mix-blend-mode: exclusion;
 }
+.display-name {
+  width: 80%;
+}
 
 .mobile-view .display-name {
   position: relative;
+}
+.display-title {
+  font-size: clamp(var(--font-display-xlarge), 10vw, var(--font-display-xxlarge));
 }
 .display-name img {
   width: 100%;
@@ -409,7 +441,7 @@ const handleLeaveProject = (id) => {
 
 /* project section */
 .section-project {
-  padding-top: var(--space-7);
+  padding-top: 480px;
   padding-bottom: var(--space-9);
 }
 .mobile-view .section-project {
