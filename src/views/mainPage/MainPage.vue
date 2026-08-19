@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import ProjectThumbnail from '@/components/mainPage/ProjectThumbnail.vue'
 import { projectsData } from '@/data/projectsData'
 import CursorEffect from '@/components/common/CursorEffect.vue'
@@ -68,6 +68,11 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateViewportHeight)
   unsubscribe?.()
 })
+
+// circular typo
+const typoString = 'from idea --- to interface '
+const typoArray = Array.from(typoString.toUpperCase())
+const typoAngleStep = computed(() => 360 / typoArray.length)
 
 // intro section
 const introText = [
@@ -171,10 +176,54 @@ const handleLeaveProject = (id) => {
         </div>
         <!-- <img ref="imageRef" src="/main/displayText.png" alt="" /> -->
       </motion.div>
+
+      <div v-if="!isMobile" class="display-title gray-100 font-kenoky">
+        <div>END-TO-END</div>
+        <div>FRONTEND</div>
+      </div>
+
+      <!-- angular typo -->
+      <motion.div
+        class="display-circular-typo-wrap"
+        :initial="{ y: 10, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :transition="{ duration: 0.8, delay: animationDelayTime + 0.5, ease: 'easeOut' }"
+      >
+        <motion.div
+          class="display-circular-typo relative gray-0 font-kenoky font-heading-xsmall"
+          :animate="{ rotate: -360 }"
+          :transition="{ duration: 15, ease: 'linear', repeat: Infinity }"
+        >
+          <div
+            class="display-circular-typo-char"
+            v-for="(char, index) in typoArray"
+            :key="index"
+            :style="{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+            }"
+          >
+            <div
+              class="display-circular-typo-char-inner"
+              :style="{
+                transform: `rotate(${index * typoAngleStep}deg) `,
+                transformOrigin: 'center',
+              }"
+            >
+              <div v-if="char === '-'" class="display-circular-typo-char-dot"></div>
+
+              {{ char === '-' ? '' : char }}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+
       <motion.div
         :initial="{ y: 10, opacity: 0 }"
         :animate="{ y: 0, opacity: 1 }"
-        :transition="{ duration: 1.2, delay: animationDelayTime + 0.5, ease: 'easeOut' }"
+        :transition="{ duration: 1.2, delay: animationDelayTime + 0.8, ease: 'easeOut' }"
         class="display-desc-area gray-0"
       >
         <div class="font-kenoky font-heading-medium font-medium">LEE SONG EUN</div>
@@ -235,7 +284,7 @@ const handleLeaveProject = (id) => {
     </div>
   </div>
 
-  <div class="main-section section-intro inline-padding">
+  <!-- <div class="main-section section-intro inline-padding">
     <div
       class="intro-text-area"
       :style="{
@@ -261,7 +310,7 @@ const handleLeaveProject = (id) => {
             </div>
           </div>
         </div>
-        <!-- tablet -->
+   
         <motion.div
           v-if="isTablet"
           :initial="{ y: 20, opacity: 0 }"
@@ -277,7 +326,7 @@ const handleLeaveProject = (id) => {
             <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
           </div>
         </motion.div>
-        <!-- pc -->
+
         <motion.div
           v-else
           :initial="{ y: 20, opacity: 0 }"
@@ -295,7 +344,9 @@ const handleLeaveProject = (id) => {
         </motion.div>
       </MotionUpward>
     </div>
-  </div>
+  </div> -->
+
+  <div class="main-section section-about inline-padding"></div>
 </template>
 
 <style scoped>
@@ -321,6 +372,7 @@ const handleLeaveProject = (id) => {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   justify-content: space-between;
 
   padding-top: calc(var(--space-4) + var(--header-height));
@@ -328,9 +380,9 @@ const handleLeaveProject = (id) => {
   background-color: var(--gray-100);
 }
 .mobile-view .section-display {
+  align-items: flex-start;
+
   height: 80vh;
-  justify-content: flex-start;
-  gap: var(--space-9);
   padding-bottom: var(--space-5);
 }
 
@@ -341,11 +393,8 @@ const handleLeaveProject = (id) => {
   flex-direction: column;
   align-items: flex-end;
   gap: var(--space-4);
-  padding-top: 40vh;
 }
 .mobile-view .display-desc-area {
-  padding-top: 0;
-
   align-items: flex-start;
   gap: var(--space-4);
 }
@@ -369,6 +418,34 @@ const handleLeaveProject = (id) => {
 .display-name img {
   width: 100%;
 }
+.display-circular-typo-wrap {
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.display-circular-typo {
+  width: 25vh;
+  height: 25vh;
+}
+.mobile-view .display-circular-typo {
+  width: 20vh;
+  height: 20vh;
+}
+.display-circular-typo-char-inner {
+  width: fit-content;
+  height: 25vh;
+}
+.mobile-view .display-circular-typo-char-inner {
+  height: 20vh;
+}
+.display-circular-typo-char-dot {
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-main);
+  border-radius: 9999px;
+}
+
 /* intro section */
 .section-intro {
   min-height: 100vh;
@@ -445,6 +522,7 @@ const handleLeaveProject = (id) => {
   padding-bottom: var(--space-9);
 }
 .mobile-view .section-project {
+  padding-top: var(--space-7);
   padding-bottom: var(--space-7);
 }
 .section-project h2 {

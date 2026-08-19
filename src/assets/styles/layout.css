@@ -22,7 +22,8 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--unit-gap);
 }
-.tablet-view .grid-col-2 {
+.tablet-view .grid-col-2,
+.mobile-view .grid-col-2 {
   width: 100%;
   display: flex;
   flex-direction: column;
