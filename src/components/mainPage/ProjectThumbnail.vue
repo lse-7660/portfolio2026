@@ -21,33 +21,13 @@ const props = defineProps({
           backgroundRepeat: 'no-repeat',
           aspectRatio: componentRatio,
         }"
-      >
-        <!-- <motion.div
-          :style="{ inset: 0, transformOrigin: 'bottom' }"
-          :initial="{ height: '100%' }"
-          :while-in-view="{ height: 0 }"
-          :in-view-options="{ amount: 0 }"
-          :transition="{ duration: 0.8, delay: 0.5, ease: 'easeInOut' }"
-          class="thumbnail-image-halftone-container"
-        >
-          <div
-            class="thumbnail-image-halftone"
-            :style="{
-              backgroundImage: `url(${data?.dottedImgUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              aspectRatio: componentRatio,
-            }"
-          ></div>
-        </motion.div> -->
-      </div>
+      ></div>
 
       <div class="project-info">
         <h3 class="project-name font-heading-large font-bold">{{ data?.name.toUpperCase() }}</h3>
         <div class="project-overview text-right">
           <div class="project-contribution font-medium">{{ data?.contribution.toUpperCase() }}</div>
-          <div class="project-stack gray-subtext">
+          <div class="project-stack gray-subtext font-label-small">
             <span v-for="(item, index) in data?.designStack" :key="index" class="project-stack-item"
               >{{ item.toUpperCase() }}
               <span
@@ -99,6 +79,10 @@ const props = defineProps({
   justify-content: space-between;
   align-items: center;
 }
+.mobile-view .project-info {
+  align-items: flex-start;
+}
+
 .project-overview {
   display: flex;
   flex-direction: column;

@@ -5,6 +5,7 @@
 @font-face {
   font-family: 'Kenoky';
   src: url(/src/assets/fonts/KenokyLight.ttf);
+  font-display: block;
 }
 
 @font-face {

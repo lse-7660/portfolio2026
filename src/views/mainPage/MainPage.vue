@@ -247,7 +247,7 @@ const handleLeaveProject = (id) => {
           <MotionPadding :initial-padding="20">
             <ProjectThumbnail
               :data="projectsData[1]"
-              :component-ratio="1 / 1"
+              :component-ratio="isTablet ? 16 / 9 : 1 / 1"
               @mouseenter="handleHoveredProject"
               @mouseleave="handleLeaveProject"
           /></MotionPadding>
@@ -257,7 +257,7 @@ const handleLeaveProject = (id) => {
             :animate-padding="isTablet ? 0 : 22"
             ><ProjectThumbnail
               :data="projectsData[2]"
-              :component-ratio="4 / 3"
+              :component-ratio="isTablet ? 16 / 9 : 4 / 3"
               @mouseenter="handleHoveredProject"
               @mouseleave="handleLeaveProject"
           /></MotionPadding>
@@ -265,7 +265,7 @@ const handleLeaveProject = (id) => {
           <MotionPadding :initial-padding="isTablet ? 20 : 30" :animate-padding="isTablet ? 0 : 3">
             <ProjectThumbnail
               :data="projectsData[3]"
-              :component-ratio="3 / 4"
+              :component-ratio="isTablet ? 16 / 9 : 3 / 4"
               @mouseenter="handleHoveredProject"
               @mouseleave="handleLeaveProject"
           /></MotionPadding>
@@ -275,7 +275,7 @@ const handleLeaveProject = (id) => {
             :animate-padding="isTablet ? 0 : 25"
             ><ProjectThumbnail
               :data="projectsData[4]"
-              :component-ratio="1 / 1"
+              :component-ratio="isTablet ? 16 / 9 : 1 / 1"
               @mouseenter="handleHoveredProject"
               @mouseleave="handleLeaveProject"
           /></MotionPadding>
@@ -533,6 +533,10 @@ const handleLeaveProject = (id) => {
   flex-direction: column;
   gap: var(--space-8);
 }
+.tablet-view .project-list {
+  gap: var(--space-5);
+}
+
 .mobile-view .project-list {
   gap: var(--space-3);
 }
