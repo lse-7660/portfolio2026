@@ -20,7 +20,8 @@
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--unit-gap);
+  column-gap: var(--unit-gap);
+  row-gap: var(--space-8);
 }
 .tablet-view .grid-col-2,
 .mobile-view .grid-col-2 {

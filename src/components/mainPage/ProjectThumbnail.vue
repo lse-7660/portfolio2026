@@ -21,7 +21,14 @@ const props = defineProps({
           backgroundRepeat: 'no-repeat',
           aspectRatio: componentRatio,
         }"
-      ></div>
+      >
+        <img
+          v-if="data?.prize"
+          src="/projects/gdweb-prize.png"
+          alt="gdweb winner prize"
+          class="thumbnail-image-prize"
+        />
+      </div>
 
       <div class="project-info">
         <h3 class="project-name font-heading-large font-bold">{{ data?.name.toUpperCase() }}</h3>
@@ -65,6 +72,22 @@ const props = defineProps({
   position: relative;
   height: auto;
   overflow: hidden;
+  border-radius: var(--space-4);
+}
+.thumbnail-image-prize {
+  position: absolute;
+  top: 0;
+  left: var(--space-5);
+  width: clamp(64px, 12vw, 120px);
+  border-bottom-left-radius: var(--space-2);
+  border-bottom-right-radius: var(--space-2);
+}
+.mobile-view .thumbnail-image-prize {
+  left: var(--space-3);
+}
+
+.mobile-view .thumbnail-image {
+  border-radius: var(--space-3);
 }
 
 .thumbnail-image-halftone-container {

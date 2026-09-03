@@ -7,6 +7,8 @@ import { motion, useScroll } from 'motion-v'
 import MotionUpward from '@/components/motion/MotionUpward.vue'
 import MotionPadding from '@/components/motion/MotionPadding.vue'
 import { previousPath } from '@/store/previousPath'
+import MotionDown from '@/components/motion/MotionDown.vue'
+import { PhCaretRight } from '@phosphor-icons/vue'
 
 const isPreviousPathIntro = ref(false)
 const isTransitioning = ref(false)
@@ -74,50 +76,7 @@ const typoString = 'from idea --- to interface '
 const typoArray = Array.from(typoString.toUpperCase())
 const typoAngleStep = computed(() => 360 / typoArray.length)
 
-// intro section
-const introText = [
-  {
-    tag: 'Planning',
-    introText: 'PLAN THE STRUCTURE',
-    title: '문제를 찾아내고 구조를 설계하다',
-    desc: [
-      '사용자가 웹사이트를 원활하게 이용할 수 있도록',
-      '정보의 흐름을 정리하고, 핵심 기능과 콘텐츠를 적절한 위치에 배치하며',
-      '사용자 경험을 고려한 플로우차트로 전체 구조와 이용 흐름을 설계합니다.',
-    ],
-  },
-  {
-    tag: 'UI/UX Design',
-    introText: 'DESIGN THE EXPERIENCE',
-    title: '경험을 시각적으로 구현하다',
-    desc: [
-      '정보를 명확하게 전달하는 인터페이스를 설계합니다.',
-      '아름다운 화면을 만드는 데 그치지 않고, 사용자가 정보를 쉽게 찾고',
-      '자연스럽게 웹페이지를 탐색할 수 있도록 설계합니다.',
-    ],
-  },
-  {
-    tag: 'Frontend',
-    introText: 'BUILD WITH CODE',
-    title: '디자인에 생명을 불어넣다',
-    desc: [
-      '정적인 디자인을 코드로 구현해 인터페이스로 완성합니다.',
-      '인터랙션과 애니메이션을 통해 화면에 생동감을 더하고,',
-      '사용자의 행동에 자연스럽게 반응하는 웹 경험을 구현합니다.',
-    ],
-  },
-]
 const isTextHovered = ref(false)
-const hoveredTextIndex = ref(0)
-
-const handleHoveredText = (id) => {
-  isTextHovered.value = true
-  hoveredTextIndex.value = id
-}
-const handleLeaveText = (id) => {
-  isTextHovered.value = false
-  hoveredTextIndex.value = null
-}
 
 // project section
 const isProjectHovered = ref(false)
@@ -148,18 +107,17 @@ const handleLeaveProject = (id) => {
     iconPosition="right"
   />
   <div class="relative">
-    <motion.div :style="{ top: `${displayNameTopPosition}px` }" class="display-name-wrap">
+    <motion.div :style="{ top: `${displayNameTopPosition}px` }" class="display-title-wrap">
       <motion.div
         v-if="!isMobile"
         :initial="{ y: 20, opacity: 0 }"
         :animate="{ y: 0, opacity: 1 }"
         :transition="{ duration: 1.2, delay: animationDelayTime + 0.3, ease: 'easeOut' }"
-        class="display-name inline-padding"
+        class="inline-padding"
         ><div class="display-title gray-0 font-kenoky">
           <div>END-TO-END</div>
           <div>FRONTEND</div>
         </div>
-        <!-- <img ref="imageRef" src="/main/displayText.png" alt="" /> -->
       </motion.div>
     </motion.div>
 
@@ -169,12 +127,10 @@ const handleLeaveProject = (id) => {
         :initial="{ y: 10, opacity: 0 }"
         :animate="{ y: 0, opacity: 1 }"
         :transition="{ duration: 0.8, ease: 'easeOut' }"
-        class="display-name"
         ><div class="display-title gray-0 font-kenoky">
           <div>END-TO-END</div>
           <div>FRONTEND</div>
         </div>
-        <!-- <img ref="imageRef" src="/main/displayText.png" alt="" /> -->
       </motion.div>
 
       <div v-if="!isMobile" class="display-title gray-100 font-kenoky">
@@ -234,119 +190,80 @@ const handleLeaveProject = (id) => {
         </div>
       </motion.div>
     </div>
-    <div class="main-section section-project inline-padding">
-      <h2 class="font-label-medium font-regular gray-subtext">PROJECTS</h2>
-      <div class="project-list">
+    <div v-if="!isMobile" class="display-title display-title-placeholder gray-bg font-kenoky">
+      <div>END-TO-END</div>
+      <div>FRONTEND</div>
+    </div>
+  </div>
+  <div class="main-section section-about inline-padding">
+    <div>
+      <MotionDown class="about-display-text">I plan the structure</MotionDown>
+      <MotionDown class="about-display-text">I design the experience</MotionDown>
+      <MotionDown class="about-display-text">I build with codes</MotionDown>
+    </div>
+    <MotionDown class="about-desc">
+      <div class="about-desc-detail">
+        <p class="font-label-medium font-regular gray-subtext">What You'll Find in Me:</p>
+        <p>단순한 구현을 넘어, 경험을 설계합니다.</p>
+        <p>
+          기획부터 UI/UX 디자인, 프론트엔드 구현까지 전 과정을 경험하며 서비스의 흐름을 전체적으로
+          이해합니다. 또한 코드의 재사용성과 유지보수성을 고려한 구조를 고민하며, 사용자 경험과 개발
+          효율을 함께 만들어갑니다.
+        </p>
+      </div>
+      <div class="about-desc-resume">
+        <p class="font-label-medium font-regular gray-subtext">자기소개서</p>
+        <a href="https://app.notion.com/p/528a4dadf3cc834eac2181fcafa4d4ba" target="_blank"
+          ><div class="btn-to-resume">
+            <p>GET TO KNOW ME</p>
+            <div class="btn-to-resume-space"></div>
+            <p><PhCaretRight weight="bold" /></p></div
+        ></a>
+      </div>
+    </MotionDown>
+  </div>
+  <div class="main-section section-project inline-padding">
+    <h2 class="font-label-medium font-regular gray-subtext">PROJECTS</h2>
+    <div class="project-list">
+      <MotionPadding :initial-padding="20">
+        <ProjectThumbnail
+          :data="projectsData[0]"
+          @mouseenter="handleHoveredProject"
+          @mouseleave="handleLeaveProject"
+      /></MotionPadding>
+      <div class="grid-col-2">
         <MotionPadding :initial-padding="20">
           <ProjectThumbnail
-            :data="projectsData[0]"
+            :data="projectsData[1]"
+            :component-ratio="isTablet ? 16 / 9 : 1 / 1"
             @mouseenter="handleHoveredProject"
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
-        <div class="grid-col-2">
-          <MotionPadding :initial-padding="20">
-            <ProjectThumbnail
-              :data="projectsData[1]"
-              :component-ratio="isTablet ? 16 / 9 : 1 / 1"
-              @mouseenter="handleHoveredProject"
-              @mouseleave="handleLeaveProject"
-          /></MotionPadding>
-          <MotionPadding
-            :initial-padding="isTablet ? 20 : 45"
-            :delay="isTablet ? 0 : 0.1"
-            :animate-padding="isTablet ? 0 : 22"
-            ><ProjectThumbnail
-              :data="projectsData[2]"
-              :component-ratio="isTablet ? 16 / 9 : 4 / 3"
-              @mouseenter="handleHoveredProject"
-              @mouseleave="handleLeaveProject"
-          /></MotionPadding>
+        <MotionPadding :initial-padding="isTablet ? 20 : 45" :delay="isTablet ? 0 : 0.1"
+          ><ProjectThumbnail
+            :data="projectsData[2]"
+            :component-ratio="isTablet ? 16 / 9 : 4 / 3"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
+        /></MotionPadding>
 
-          <MotionPadding :initial-padding="isTablet ? 20 : 30" :animate-padding="isTablet ? 0 : 3">
-            <ProjectThumbnail
-              :data="projectsData[3]"
-              :component-ratio="isTablet ? 16 / 9 : 3 / 4"
-              @mouseenter="handleHoveredProject"
-              @mouseleave="handleLeaveProject"
-          /></MotionPadding>
-          <MotionPadding
-            :initial-padding="isTablet ? 20 : 50"
-            :delay="isTablet ? 0 : 0.1"
-            :animate-padding="isTablet ? 0 : 25"
-            ><ProjectThumbnail
-              :data="projectsData[4]"
-              :component-ratio="isTablet ? 16 / 9 : 1 / 1"
-              @mouseenter="handleHoveredProject"
-              @mouseleave="handleLeaveProject"
-          /></MotionPadding>
-        </div>
+        <MotionPadding :initial-padding="isTablet ? 20 : 30">
+          <ProjectThumbnail
+            :data="projectsData[3]"
+            :component-ratio="isTablet ? 16 / 9 : 3 / 4"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
+        /></MotionPadding>
+        <MotionPadding :initial-padding="isTablet ? 20 : 50" :delay="isTablet ? 0 : 0.1"
+          ><ProjectThumbnail
+            :data="projectsData[4]"
+            :component-ratio="isTablet ? 16 / 9 : 1 / 1"
+            @mouseenter="handleHoveredProject"
+            @mouseleave="handleLeaveProject"
+        /></MotionPadding>
       </div>
     </div>
   </div>
-
-  <!-- <div class="main-section section-intro inline-padding">
-    <div
-      class="intro-text-area"
-      :style="{
-        paddingTop: isTablet ? '40px' : `${calculatedHeight}px`,
-      }"
-    >
-      <MotionUpward
-        class="intro-text-item"
-        v-for="(item, index) in introText"
-        :key="index"
-        @mouseenter="handleHoveredText(index)"
-        @mouseleave="handleLeaveText"
-      >
-        <div class="intro-text-display">
-          <div class="intro-tag">{{ item.tag }}</div>
-          <div class="intro-text">
-            {{ item.introText }}
-            <div
-              v-if="hoveredTextIndex === index && !isTablet"
-              class="intro-text intro-text-prog font-prog"
-            >
-              {{ item.introText }}
-            </div>
-          </div>
-        </div>
-   
-        <motion.div
-          v-if="isTablet"
-          :initial="{ y: 20, opacity: 0 }"
-          :animate="{
-            y: 0,
-            opacity: 1,
-          }"
-          :transition="{ duration: 0.3, ease: 'easeOut' }"
-          class="intro-text-desc"
-        >
-          <p class="font-label-medium font-medium">{{ item.title }}</p>
-          <div>
-            <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          v-else
-          :initial="{ y: 20, opacity: 0 }"
-          :animate="{
-            y: hoveredTextIndex === index ? 0 : 20,
-            opacity: hoveredTextIndex === index ? 1 : 0,
-          }"
-          :transition="{ duration: 0.3, ease: 'easeOut' }"
-          class="intro-text-desc text-right"
-        >
-          <p class="font-label-medium font-medium">{{ item.title }}</p>
-          <div>
-            <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
-          </div>
-        </motion.div>
-      </MotionUpward>
-    </div>
-  </div> -->
-
-  <div class="main-section section-about inline-padding"></div>
 </template>
 
 <style scoped>
@@ -398,26 +315,21 @@ const handleLeaveProject = (id) => {
   align-items: flex-start;
   gap: var(--space-4);
 }
-.display-name-wrap {
+.display-title-wrap {
   position: absolute;
   z-index: 10;
   width: 100%;
   background-color: #000000;
   mix-blend-mode: exclusion;
 }
-.display-name {
-  width: 80%;
+.display-title-placeholder {
+  padding-block: var(--space-9);
 }
 
-.mobile-view .display-name {
-  position: relative;
-}
 .display-title {
-  font-size: clamp(var(--font-display-xlarge), 10vw, var(--font-display-xxlarge));
+  font-size: clamp(58px, 8vw, 120px);
 }
-.display-name img {
-  width: 100%;
-}
+
 .display-circular-typo-wrap {
   overflow: hidden;
   width: 100%;
@@ -446,80 +358,92 @@ const handleLeaveProject = (id) => {
   border-radius: 9999px;
 }
 
-/* intro section */
-.section-intro {
-  min-height: 100vh;
-  background: var(--gray-0);
+/* about section */
+.section-about {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-9);
+  border-bottom: 1px solid var(--gray-border);
 }
-.mobile-view .section-intro {
-  min-height: 100%;
+.tablet-view .section-about {
+  padding-block: var(--space-7);
 }
-
-.intro-text-area {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--space-8);
-}
-.mobile-view .intro-text-area {
-  height: 100%;
+.mobile-view .section-about {
   padding-top: var(--space-6);
   padding-bottom: var(--space-7);
-  gap: var(--space-7);
+}
+.about-display-text {
+  padding-block: var(--space-2);
+  font-family: 'Kenoky';
+  font-size: var(--font-display-xlarge);
+}
+.mobile-view .about-display-text {
+  padding-block: var(--space-1);
+  font-size: var(--font-display-large);
+}
+.about-desc {
+  margin-left: calc(var(--grid-unit) * 7);
+}
+.tablet-view .about-desc {
+  margin-left: calc(var(--grid-unit) * 4);
+  margin-right: calc(var(--grid-unit) * 1);
+}
+.mobile-view .about-desc {
+  margin-left: 0;
 }
 
-.intro-text-item {
+.about-desc-detail {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-8);
 }
-.mobile-view .intro-text-item {
+.mobile-view .about-desc-detail {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+.about-desc-resume {
+  display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
-
-.intro-text-display {
+.btn-to-resume {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: var(--space-2);
-}
-.intro-tag {
-  font-size: var(--font-label-medium);
-}
-.intro-text {
-  flex-shrink: 0;
-  position: relative;
-  font-size: var(--font-display-large);
-  font-weight: var(--font-weight-bold);
-  color: var(--gray-100);
-}
-.intro-text.intro-text-prog {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  z-index: 200;
-  transform: translateY(-40%);
-  text-wrap: nowrap;
+  padding-block: var(--space-2);
+  width: 100%;
 
+  font-size: var(--font-label-large);
   font-weight: var(--font-weight-regular);
-  font-size: 56px;
-  letter-spacing: -8%;
-  color: var(--gray-0);
 
-  mix-blend-mode: color-dodge;
+  transition: all 0.5s ease-in-out;
 }
-.intro-text-desc {
+.btn-to-resume:hover {
+  padding-inline: var(--space-3);
+
+  background-color: var(--gray-text);
+  color: var(--gray-0);
+  font-weight: var(--font-weight-regular);
+}
+.btn-to-resume p {
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+
+  align-items: center;
+}
+.btn-to-resume-space {
+  width: 0%;
+  transition: all 0.5s ease-in-out 0.2s;
+}
+.btn-to-resume:hover .btn-to-resume-space {
+  width: 100%;
 }
 
 /* project section */
 .section-project {
-  padding-top: 480px;
-  padding-bottom: var(--space-9);
+  padding-block: var(--space-9);
 }
 .mobile-view .section-project {
   padding-top: var(--space-7);
