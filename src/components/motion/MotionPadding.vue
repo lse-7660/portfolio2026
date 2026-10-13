@@ -27,7 +27,7 @@ const props = defineProps({
 
 <style scoped>
 .motion-padding {
-  width: 100%;
+  /* width: 100%; */
   height: fit-content;
 }
 </style>

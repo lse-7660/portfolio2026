@@ -22,32 +22,19 @@ const props = defineProps({
           aspectRatio: componentRatio,
         }"
       >
-        <motion.div
-          :style="{ inset: 0, transformOrigin: 'bottom' }"
-          :initial="{ height: '100%' }"
-          :while-in-view="{ height: 0 }"
-          :in-view-options="{ amount: 0 }"
-          :transition="{ duration: 0.8, delay: 0.5, ease: 'easeInOut' }"
-          class="thumbnail-image-halftone-container"
-        >
-          <div
-            class="thumbnail-image-halftone"
-            :style="{
-              backgroundImage: `url(${data?.dottedImgUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              aspectRatio: componentRatio,
-            }"
-          ></div>
-        </motion.div>
+        <img
+          v-if="data?.prize"
+          src="/projects/gdweb-prize.png"
+          alt="gdweb winner prize"
+          class="thumbnail-image-prize"
+        />
       </div>
 
       <div class="project-info">
         <h3 class="project-name font-heading-large font-bold">{{ data?.name.toUpperCase() }}</h3>
         <div class="project-overview text-right">
           <div class="project-contribution font-medium">{{ data?.contribution.toUpperCase() }}</div>
-          <div class="project-stack gray-subtext">
+          <div class="project-stack gray-subtext font-label-small">
             <span v-for="(item, index) in data?.designStack" :key="index" class="project-stack-item"
               >{{ item.toUpperCase() }}
               <span
@@ -85,6 +72,22 @@ const props = defineProps({
   position: relative;
   height: auto;
   overflow: hidden;
+  border-radius: var(--space-4);
+}
+.thumbnail-image-prize {
+  position: absolute;
+  top: 0;
+  left: var(--space-5);
+  width: clamp(64px, 12vw, 120px);
+  border-bottom-left-radius: var(--space-2);
+  border-bottom-right-radius: var(--space-2);
+}
+.mobile-view .thumbnail-image-prize {
+  left: var(--space-3);
+}
+
+.mobile-view .thumbnail-image {
+  border-radius: var(--space-3);
 }
 
 .thumbnail-image-halftone-container {
@@ -99,6 +102,10 @@ const props = defineProps({
   justify-content: space-between;
   align-items: center;
 }
+.mobile-view .project-info {
+  align-items: flex-start;
+}
+
 .project-overview {
   display: flex;
   flex-direction: column;

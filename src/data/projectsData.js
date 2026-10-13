@@ -49,6 +49,7 @@ export const projectsData = [
         text: '채도 높은 포인트 컬러를 활용해 도전적인 브랜드 이미지를 표현했다.',
       },
     ],
+    prize: true,
   },
   {
     routeId: 'leyve-cloud',
@@ -103,6 +104,7 @@ export const projectsData = [
         text: '사용 흐름에 맞춘 인터랙션 설계로 자연스럽게 다음 행동으로 이어지도록 했다.',
       },
     ],
+    prize: false,
   },
   {
     routeId: 'brave-vote',
@@ -146,7 +148,9 @@ export const projectsData = [
         text: '입력 데이터의 정확성과 사용자 경험을 동시에 고려한 유효성 검증을 구현했다.',
       },
     ],
+    prize: false,
   },
+
   {
     routeId: 'leyve-mobile-app',
     name: 'Leyve App',
@@ -196,6 +200,7 @@ export const projectsData = [
         text: '미구성 페이지를 기존 디자인 톤에 맞춰 설계하고 구현했다.',
       },
     ],
+    prize: false,
   },
   {
     routeId: '2025-portfolio',
@@ -216,5 +221,6 @@ export const projectsData = [
     frontStack: ['react'],
     task: [],
     detail: [],
+    prize: false,
   },
 ]

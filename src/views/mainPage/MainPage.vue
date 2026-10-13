@@ -1,19 +1,32 @@
 <script setup>
-import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import ProjectThumbnail from '@/components/mainPage/ProjectThumbnail.vue'
 import { projectsData } from '@/data/projectsData'
 import CursorEffect from '@/components/common/CursorEffect.vue'
-import { motion, useScroll, useTransform } from 'motion-v'
+import { motion, useScroll } from 'motion-v'
 import MotionUpward from '@/components/motion/MotionUpward.vue'
 import MotionPadding from '@/components/motion/MotionPadding.vue'
+import { previousPath } from '@/store/previousPath'
+import MotionDown from '@/components/motion/MotionDown.vue'
+import { PhCaretRight } from '@phosphor-icons/vue'
+
+const isPreviousPathIntro = ref(false)
+const isTransitioning = ref(false)
+const animationDelayTime = ref(0)
 
 // 반응형
 const isMobile = inject('isMobile', false)
 const isTablet = inject('isTablet', false)
 
+// viewport height
+const viewportHeight = ref(0)
+const updateViewportHeight = () => {
+  viewportHeight.value = window.innerHeight
+}
+
 // name image height
 const imageRef = ref(null)
-const calculatedHeight = ref(0) // 스타일 변수로 쓸 높이 값
+const calculatedHeight = ref(0)
 
 const resizeObserver = new ResizeObserver((entries) => {
   for (let entry of entries) {
@@ -21,86 +34,49 @@ const resizeObserver = new ResizeObserver((entries) => {
   }
 })
 
-// viewport height
-const viewportHeight = ref(window.innerHeight)
-const updateHeight = () => {
-  viewportHeight.value = window.innerHeight
-}
+// Y scroll for displayName
+const { scrollY } = useScroll()
+const displayNameTopPosition = ref(88)
+let unsubscribe
 
-// viewport resizing
 onMounted(() => {
-  window.addEventListener('resize', updateHeight)
-  updateHeight()
+  // page transition: intro > main
+  if (previousPath.value === '/') {
+    isPreviousPathIntro.value = true
+    animationDelayTime.value = 0.1
+    setTimeout(() => {
+      isTransitioning.value = true
+    }, animationDelayTime * 1000)
+  }
+
   if (imageRef.value) {
     resizeObserver.observe(imageRef.value)
   }
+
+  updateViewportHeight()
+  window.addEventListener('resize', updateViewportHeight)
+
+  displayNameTopPosition.value = scrollY.get() + 120
+  unsubscribe = scrollY.on('change', (latest) => {
+    if (latest < viewportHeight.value) {
+      displayNameTopPosition.value = latest + 120
+    } else {
+      displayNameTopPosition.value = viewportHeight.value + 120
+    }
+  })
 })
 onUnmounted(() => {
   resizeObserver.disconnect()
-  window.removeEventListener('resize', updateHeight)
+  window.removeEventListener('resize', updateViewportHeight)
+  unsubscribe?.()
 })
 
-// display text animation
-const { scrollY } = useScroll()
+// circular typo
+const typoString = 'from idea --- to interface '
+const typoArray = Array.from(typoString.toUpperCase())
+const typoAngleStep = computed(() => 360 / typoArray.length)
 
-const nameYPosition = useTransform(scrollY, (latest) => {
-  const start = viewportHeight.value + 120
-
-  const end = viewportHeight.value - calculatedHeight.value - 24
-
-  const range = calculatedHeight.value + 144 || 1000
-
-  const progress = Math.min(Math.max(latest / range, 0), 1)
-
-  const currentPos = start + (end - start) * progress
-
-  return `${currentPos}px`
-})
-
-// intro section
-const introText = [
-  {
-    tag: 'Planning',
-    introText: 'PLAN THE STRUCTURE',
-    title: '문제를 찾아내고 구조를 설계하다',
-    desc: [
-      '사용자가 웹사이트를 원활하게 이용할 수 있도록',
-      '정보의 흐름을 정리하고, 핵심 기능과 콘텐츠를 적절한 위치에 배치하며',
-      '사용자 경험을 고려한 플로우차트로 전체 구조와 이용 흐름을 설계합니다.',
-    ],
-  },
-  {
-    tag: 'UI/UX Design',
-    introText: 'DESIGN THE EXPERIENCE',
-    title: '경험을 시각적으로 구현하다',
-    desc: [
-      '정보를 명확하게 전달하는 인터페이스를 설계합니다.',
-      '아름다운 화면을 만드는 데 그치지 않고, 사용자가 정보를 쉽게 찾고',
-      '자연스럽게 웹페이지를 탐색할 수 있도록 설계합니다.',
-    ],
-  },
-  {
-    tag: 'Frontend',
-    introText: 'BUILD WITH CODE',
-    title: '디자인에 생명을 불어넣다',
-    desc: [
-      '정적인 디자인을 코드로 구현해 인터페이스로 완성합니다.',
-      '인터랙션과 애니메이션을 통해 화면에 생동감을 더하고,',
-      '사용자의 행동에 자연스럽게 반응하는 웹 경험을 구현합니다.',
-    ],
-  },
-]
 const isTextHovered = ref(false)
-const hoveredTextIndex = ref(0)
-
-const handleHoveredText = (id) => {
-  isTextHovered.value = true
-  hoveredTextIndex.value = id
-}
-const handleLeaveText = (id) => {
-  isTextHovered.value = false
-  hoveredTextIndex.value = null
-}
 
 // project section
 const isProjectHovered = ref(false)
@@ -117,6 +93,12 @@ const handleLeaveProject = (id) => {
 </script>
 
 <template>
+  <div
+    v-if="isPreviousPathIntro"
+    class="page-transition-in"
+    :class="isTransitioning ? 'is-active' : ''"
+  ></div>
+
   <CursorEffect
     :introHovered="isTextHovered"
     :projectHovered="isProjectHovered"
@@ -125,115 +107,123 @@ const handleLeaveProject = (id) => {
     iconPosition="right"
   />
   <div class="relative">
-    <motion.div
-      v-if="!isMobile"
-      :initial="{ y: 10, opacity: 0 }"
-      :animate="{ y: 0, opacity: 1 }"
-      :transition="{ duration: 0.8, ease: 'easeOut' }"
-      class="display-name inline-padding"
-      :style="{ bottom: nameYPosition }"
-    >
-      <img ref="imageRef" src="/main/LEE SONG EUN.png" alt="" />
+    <motion.div :style="{ top: `${displayNameTopPosition}px` }" class="display-title-wrap">
+      <motion.div
+        v-if="!isMobile"
+        :initial="{ y: 20, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :transition="{ duration: 1.2, delay: animationDelayTime + 0.3, ease: 'easeOut' }"
+        class="inline-padding"
+        ><div class="display-title gray-0 font-kenoky">
+          <div>END-TO-END</div>
+          <div>FRONTEND</div>
+        </div>
+      </motion.div>
     </motion.div>
 
     <div class="main-section section-display inline-padding">
-      <div class="display-bottom-area font-heading-xlarge gray-0 font-bold">
-        <div>
-          FROM IDEA
-
-          <p>TO INTERFACE</p>
+      <motion.div
+        v-if="isMobile"
+        :initial="{ y: 10, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :transition="{ duration: 0.8, ease: 'easeOut' }"
+        ><div class="display-title gray-0 font-kenoky">
+          <div>END-TO-END</div>
+          <div>FRONTEND</div>
         </div>
+      </motion.div>
+
+      <div v-if="!isMobile" class="display-title gray-100 font-kenoky">
+        <div>END-TO-END</div>
+        <div>FRONTEND</div>
       </div>
+
+      <!-- angular typo -->
+      <motion.div
+        class="display-circular-typo-wrap"
+        :initial="{ y: 10, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :transition="{ duration: 0.8, delay: animationDelayTime + 0.5, ease: 'easeOut' }"
+      >
+        <motion.div
+          class="display-circular-typo relative gray-0 font-kenoky font-heading-xsmall"
+          :animate="{ rotate: -360 }"
+          :transition="{ duration: 15, ease: 'linear', repeat: Infinity }"
+        >
+          <div
+            class="display-circular-typo-char"
+            v-for="(char, index) in typoArray"
+            :key="index"
+            :style="{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+            }"
+          >
+            <div
+              class="display-circular-typo-char-inner"
+              :style="{
+                transform: `rotate(${index * typoAngleStep}deg) `,
+                transformOrigin: 'center',
+              }"
+            >
+              <div v-if="char === '-'" class="display-circular-typo-char-dot"></div>
+
+              {{ char === '-' ? '' : char }}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
 
       <motion.div
         :initial="{ y: 10, opacity: 0 }"
         :animate="{ y: 0, opacity: 1 }"
-        :transition="{ duration: 0.8, delay: 0.5, ease: 'easeOut' }"
-        class="display-top-area gray-0"
+        :transition="{ duration: 1.2, delay: animationDelayTime + 0.8, ease: 'easeOut' }"
+        class="display-desc-area gray-0"
       >
-        <motion.div
-          v-if="isMobile"
-          :initial="{ y: 10, opacity: 0 }"
-          :animate="{ y: 0, opacity: 1 }"
-          :transition="{ duration: 0.8, ease: 'easeOut' }"
-          class="display-name"
-        >
-          <img ref="imageRef" src="/main/LEE SONG EUN.png" alt="" />
-        </motion.div>
-        <div class="font-heading-small font-medium">END-TO-END FRONTEND</div>
+        <div class="font-kenoky font-heading-medium font-medium">LEE SONG EUN</div>
+
         <div class="font-light" :class="isMobile ? '' : 'text-right'">
-          여러 개의 점이 모여 하나의 원이 되듯이. <br />
-          기획과 디자인, 그리고 구현까지. 아이디어를 완성된 사용자 경험으로 만드는 프론트엔드 개발자
+          기획과 디자인, 그리고 구현까지.<br />아이디어를 사용자 경험으로 완성하는 프론트엔드 개발자
           이송은입니다.
         </div>
       </motion.div>
     </div>
-
-    <div class="main-section section-intro inline-padding">
-      <div
-        class="intro-text-area"
-        :style="{
-          paddingTop: isTablet ? '40px' : `${calculatedHeight}px`,
-        }"
-      >
-        <MotionUpward
-          class="intro-text-item"
-          v-for="(item, index) in introText"
-          :key="index"
-          @mouseenter="handleHoveredText(index)"
-          @mouseleave="handleLeaveText"
-        >
-          <div class="intro-text-display">
-            <div class="intro-tag">{{ item.tag }}</div>
-            <div class="intro-text">
-              {{ item.introText }}
-              <div
-                v-if="hoveredTextIndex === index && !isTablet"
-                class="intro-text intro-text-prog font-prog"
-              >
-                {{ item.introText }}
-              </div>
-            </div>
-          </div>
-          <!-- tablet -->
-          <motion.div
-            v-if="isTablet"
-            :initial="{ y: 20, opacity: 0 }"
-            :animate="{
-              y: 0,
-              opacity: 1,
-            }"
-            :transition="{ duration: 0.3, ease: 'easeOut' }"
-            class="intro-text-desc"
-          >
-            <p class="font-label-medium font-medium">{{ item.title }}</p>
-            <div>
-              <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
-            </div>
-          </motion.div>
-          <!-- pc -->
-          <motion.div
-            v-else
-            :initial="{ y: 20, opacity: 0 }"
-            :animate="{
-              y: hoveredTextIndex === index ? 0 : 20,
-              opacity: hoveredTextIndex === index ? 1 : 0,
-            }"
-            :transition="{ duration: 0.3, ease: 'easeOut' }"
-            class="intro-text-desc text-right"
-          >
-            <p class="font-label-medium font-medium">{{ item.title }}</p>
-            <div>
-              <p class="font-body-small" v-for="line in item.desc" :key="line">{{ line }}</p>
-            </div>
-          </motion.div>
-        </MotionUpward>
-      </div>
+    <div v-if="!isMobile" class="display-title display-title-placeholder gray-bg font-kenoky">
+      <div>END-TO-END</div>
+      <div>FRONTEND</div>
     </div>
   </div>
-
+  <div class="main-section section-about inline-padding">
+    <div>
+      <MotionDown class="about-display-text">I plan the structure</MotionDown>
+      <MotionDown class="about-display-text">I design the experience</MotionDown>
+      <MotionDown class="about-display-text">I build with codes</MotionDown>
+    </div>
+    <MotionDown class="about-desc">
+      <div class="about-desc-detail">
+        <p class="font-label-medium font-regular gray-subtext">What You'll Find in Me:</p>
+        <p>단순한 구현을 넘어, 경험을 설계합니다.</p>
+        <p>
+          기획부터 UI/UX 디자인, 프론트엔드 구현까지 전 과정을 경험하며 서비스의 흐름을 전체적으로
+          이해합니다. 또한 코드의 재사용성과 유지보수성을 고려한 구조를 고민하며, 사용자 경험과 개발
+          효율을 함께 만들어갑니다.
+        </p>
+      </div>
+      <div class="about-desc-resume">
+        <p class="font-label-medium font-regular gray-subtext">자기소개서</p>
+        <a href="https://app.notion.com/p/528a4dadf3cc834eac2181fcafa4d4ba" target="_blank"
+          ><div class="btn-to-resume">
+            <p>GET TO KNOW ME</p>
+            <div class="btn-to-resume-space"></div>
+            <p><PhCaretRight weight="bold" /></p></div
+        ></a>
+      </div>
+    </MotionDown>
+  </div>
   <div class="main-section section-project inline-padding">
-    <h2 class="font-heading-xsmall gray-subtext">PROJECTS</h2>
+    <h2 class="font-label-medium font-regular gray-subtext">PROJECTS</h2>
     <div class="project-list">
       <MotionPadding :initial-padding="20">
         <ProjectThumbnail
@@ -245,35 +235,29 @@ const handleLeaveProject = (id) => {
         <MotionPadding :initial-padding="20">
           <ProjectThumbnail
             :data="projectsData[1]"
-            :component-ratio="1 / 1"
+            :component-ratio="isTablet ? 16 / 9 : 1 / 1"
             @mouseenter="handleHoveredProject"
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
-        <MotionPadding
-          :initial-padding="isMobile ? 20 : 45"
-          :delay="isMobile ? 0 : 0.1"
-          :animate-padding="isMobile ? 0 : 28"
+        <MotionPadding :initial-padding="isTablet ? 20 : 45" :delay="isTablet ? 0 : 0.1"
           ><ProjectThumbnail
             :data="projectsData[2]"
-            :component-ratio="4 / 3"
+            :component-ratio="isTablet ? 16 / 9 : 4 / 3"
             @mouseenter="handleHoveredProject"
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
 
-        <MotionPadding :initial-padding="isMobile ? 20 : 30" :animate-padding="isMobile ? 0 : 3">
+        <MotionPadding :initial-padding="isTablet ? 20 : 30">
           <ProjectThumbnail
             :data="projectsData[3]"
-            :component-ratio="4 / 5"
+            :component-ratio="isTablet ? 16 / 9 : 3 / 4"
             @mouseenter="handleHoveredProject"
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
-        <MotionPadding
-          :initial-padding="isMobile ? 20 : 50"
-          :delay="isMobile ? 0 : 0.1"
-          :animate-padding="isMobile ? 0 : 25"
+        <MotionPadding :initial-padding="isTablet ? 20 : 50" :delay="isTablet ? 0 : 0.1"
           ><ProjectThumbnail
             :data="projectsData[4]"
-            :component-ratio="4 / 3"
+            :component-ratio="isTablet ? 16 / 9 : 1 / 1"
             @mouseenter="handleHoveredProject"
             @mouseleave="handleLeaveProject"
         /></MotionPadding>
@@ -283,12 +267,29 @@ const handleLeaveProject = (id) => {
 </template>
 
 <style scoped>
+/* transition */
+.page-transition-in {
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100vh;
+
+  background-color: var(--gray-0);
+
+  transition: height 0.3s ease-out;
+}
+.page-transition-in.is-active {
+  height: 0;
+}
 /* display section */
 .section-display {
   position: relative;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   justify-content: space-between;
 
   padding-top: calc(var(--space-4) + var(--header-height));
@@ -296,123 +297,156 @@ const handleLeaveProject = (id) => {
   background-color: var(--gray-100);
 }
 .mobile-view .section-display {
-  height: 70vh;
+  align-items: flex-start;
+
+  height: 80vh;
   padding-bottom: var(--space-5);
 }
 
-.section-display::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url(/main/display-bg.jpg);
-  opacity: 0.2;
-}
-.display-top-area {
+.display-desc-area {
   position: relative;
   z-index: 10;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.mobile-view .display-top-area {
   flex-direction: column;
-  gap: var(--space-2);
+  align-items: flex-end;
+  gap: var(--space-4);
 }
-
-.display-bottom-area {
-  position: relative;
-  z-index: 10;
+.mobile-view .display-desc-area {
+  align-items: flex-start;
+  gap: var(--space-4);
 }
-.display-name {
+.display-title-wrap {
   position: absolute;
   z-index: 10;
   width: 100%;
   background-color: #000000;
   mix-blend-mode: exclusion;
 }
-
-.mobile-view .display-name {
-  position: relative;
+.display-title-placeholder {
+  padding-block: var(--space-9);
 }
-.display-name img {
+
+.display-title {
+  font-size: clamp(58px, 8vw, 120px);
+}
+
+.display-circular-typo-wrap {
+  overflow: hidden;
   width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
-/* intro section */
-.section-intro {
-  min-height: 100vh;
-  background: var(--gray-0);
+.display-circular-typo {
+  width: 25vh;
+  height: 25vh;
 }
-.mobile-view .section-intro {
-  min-height: 100%;
+.mobile-view .display-circular-typo {
+  width: 20vh;
+  height: 20vh;
+}
+.display-circular-typo-char-inner {
+  width: fit-content;
+  height: 25vh;
+}
+.mobile-view .display-circular-typo-char-inner {
+  height: 20vh;
+}
+.display-circular-typo-char-dot {
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-main);
+  border-radius: 9999px;
 }
 
-.intro-text-area {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--space-8);
+/* about section */
+.section-about {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-9);
+  border-bottom: 1px solid var(--gray-border);
 }
-.mobile-view .intro-text-area {
-  height: 100%;
+.tablet-view .section-about {
+  padding-block: var(--space-7);
+}
+.mobile-view .section-about {
   padding-top: var(--space-6);
   padding-bottom: var(--space-7);
-  gap: var(--space-7);
+}
+.about-display-text {
+  padding-block: var(--space-2);
+  font-family: 'Kenoky';
+  font-size: var(--font-display-xlarge);
+}
+.mobile-view .about-display-text {
+  padding-block: var(--space-1);
+  font-size: var(--font-display-large);
+}
+.about-desc {
+  margin-left: calc(var(--grid-unit) * 7);
+}
+.tablet-view .about-desc {
+  margin-left: calc(var(--grid-unit) * 4);
+  margin-right: calc(var(--grid-unit) * 1);
+}
+.mobile-view .about-desc {
+  margin-left: 0;
 }
 
-.intro-text-item {
+.about-desc-detail {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-8);
 }
-.mobile-view .intro-text-item {
+.mobile-view .about-desc-detail {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+.about-desc-resume {
+  display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
-
-.intro-text-display {
+.btn-to-resume {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: var(--space-2);
-}
-.intro-tag {
-  font-size: var(--font-label-medium);
-}
-.intro-text {
-  flex-shrink: 0;
-  position: relative;
-  font-size: var(--font-display-large);
-  font-weight: var(--font-weight-bold);
-  color: var(--gray-100);
-}
-.intro-text.intro-text-prog {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  z-index: 200;
-  transform: translateY(-40%);
-  text-wrap: nowrap;
+  padding-block: var(--space-2);
+  width: 100%;
 
+  font-size: var(--font-label-large);
   font-weight: var(--font-weight-regular);
-  font-size: 56px;
-  letter-spacing: -8%;
-  color: var(--gray-0);
 
-  mix-blend-mode: color-dodge;
+  transition: all 0.5s ease-in-out;
 }
-.intro-text-desc {
+.btn-to-resume:hover {
+  padding-inline: var(--space-3);
+
+  background-color: var(--gray-text);
+  color: var(--gray-0);
+  font-weight: var(--font-weight-regular);
+}
+.btn-to-resume p {
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+
+  align-items: center;
+}
+.btn-to-resume-space {
+  width: 0%;
+  transition: all 0.5s ease-in-out 0.2s;
+}
+.btn-to-resume:hover .btn-to-resume-space {
+  width: 100%;
 }
 
 /* project section */
 .section-project {
-  padding-top: var(--space-7);
-  padding-bottom: var(--space-9);
+  padding-block: var(--space-9);
 }
 .mobile-view .section-project {
+  padding-top: var(--space-7);
   padding-bottom: var(--space-7);
 }
 .section-project h2 {
@@ -423,6 +457,10 @@ const handleLeaveProject = (id) => {
   flex-direction: column;
   gap: var(--space-8);
 }
+.tablet-view .project-list {
+  gap: var(--space-5);
+}
+
 .mobile-view .project-list {
   gap: var(--space-3);
 }
