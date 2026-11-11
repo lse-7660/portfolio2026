@@ -29,10 +29,10 @@ export const projectsData = [
         title: '타이포그래피 디자인',
         desc: '타이포그래피 중심의 UI 디자인으로 신뢰성 있는 IT 기업의 브랜드 이미지 구축',
       },
-      {
-        title: 'Troubleshooting',
-        desc: '데이터 바인딩 시 null 체크 로직(Optional Chaining) 부재로 인한 렌더링 오류 개선 및 안정성 확보',
-      },
+      // {
+      //   title: 'Troubleshooting',
+      //   desc: '데이터 바인딩 시 null 체크 로직(Optional Chaining) 부재로 인한 렌더링 오류 개선 및 안정성 확보',
+      // },
     ],
     detail: [
       { imgUrl: '/projects/leysys-1.png', text: '상황에 따른 커서 이펙트로 몰입감을 더했다.' },
